@@ -1,7 +1,7 @@
 {
-  "name": "change-bars",
+  "name": "remotion-horizontal-bars-star",
   "version": "1.0.0",
-  "description": "My Remotion video",
+  "description": "Development of a horizontal bars video.",
   "sideEffects": [
     "*.css"
   ],
@@ -24,6 +24,8 @@
     "@remotion/bundler": "4.0.48",
     "@remotion/cli": "4.0.48",
     "@remotion/zod-types": "4.0.48",
+    "d3-array": "^3.2.4",
+    "d3-scale": "^4.0.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "remotion": "4.0.48",
@@ -31,11 +33,13 @@
   },
   "devDependencies": {
     "@remotion/eslint-config": "4.0.48",
+    "@remotion/tailwind": "4.0.48",
+    "@types/d3-array": "^3.0.8",
+    "@types/d3-scale": "^4.0.5",
     "@types/react": "^18.0.26",
     "@types/web": "^0.0.86",
     "eslint": "^8.43.0",
     "prettier": "^2.8.8",
-    "@remotion/tailwind": "4.0.48",
     "typescript": "^4.9.4"
   },
   "packageManager": "npm@10.1.0"

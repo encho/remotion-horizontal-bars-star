@@ -8,7 +8,8 @@ import {
 export const SimpleTitle: React.FC<{
 	children: React.ReactNode;
 	color: string;
-}> = ({children, color}) => {
+	fontSize: number;
+}> = ({children, color, fontSize}) => {
 	const frame = useCurrentFrame();
 	const {durationInFrames} = useVideoConfig();
 
@@ -23,18 +24,19 @@ export const SimpleTitle: React.FC<{
 
 	return (
 		<AbsoluteFill>
-			<h1
-				style={{
-					color,
-					fontFamily: 'sans-serif',
-					fontSize: 70,
-					marginTop: 32,
-					marginLeft: 40 - (1 - zero_to_1) * 1500,
-					fontWeight: 300,
-				}}
-			>
-				{children}
-			</h1>
+			<div className="flex items-center" style={{height: 150}}>
+				<h1
+					style={{
+						color,
+						fontSize,
+						fontFamily: 'sans-serif',
+						marginLeft: 40 - (1 - zero_to_1) * 1500,
+						fontWeight: 300,
+					}}
+				>
+					{children}
+				</h1>
+			</div>
 		</AbsoluteFill>
 	);
 };

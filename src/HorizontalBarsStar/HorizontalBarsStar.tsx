@@ -8,6 +8,7 @@ import {HorizontalBars, zBarItem} from './HorizontalBars';
 
 export const horizontalBarsStarSchema = z.object({
 	titleText: z.string(),
+	titleFontSize: z.number(),
 	titleColor: zColor(),
 	backgroundColor: zColor(),
 	progressColor: zColor(),
@@ -16,10 +17,19 @@ export const horizontalBarsStarSchema = z.object({
 
 export const HorizontalBarsStar: React.FC<
 	z.infer<typeof horizontalBarsStarSchema>
-> = ({titleText, titleColor, progressColor, backgroundColor, items}) => {
+> = ({
+	titleText,
+	titleFontSize,
+	titleColor,
+	progressColor,
+	backgroundColor,
+	items,
+}) => {
 	return (
 		<AbsoluteFill style={{backgroundColor}}>
-			<SimpleTitle color={titleColor}>{titleText}</SimpleTitle>
+			<SimpleTitle color={titleColor} fontSize={titleFontSize}>
+				{titleText}
+			</SimpleTitle>
 			<HorizontalBars dataItems={items} />
 			<ProgressBar color={progressColor} />
 		</AbsoluteFill>

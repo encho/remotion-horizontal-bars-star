@@ -132,7 +132,6 @@ const HorizontalBar = ({
 				left: 0,
 				backgroundColor: colors.background,
 				borderRightStyle: 'solid',
-				// borderRightWidth: 4,
 				borderRightWidth: BORDER_WIDTH,
 				borderRightColor: colors.border,
 				fontSize: 30,
@@ -176,7 +175,7 @@ const BarDescription = ({
 
 	// const VERTICAL_GAP = -20;
 	const TITLE_FONT_SIZE = 24;
-	const DESCRIPTION_FONT_SIZE = 20;
+	const DESCRIPTION_FONT_SIZE = 22;
 
 	return (
 		<div

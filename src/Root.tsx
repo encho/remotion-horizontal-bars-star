@@ -15,6 +15,11 @@ const horizontalVideo = {
 	height: 1080,
 };
 
+const squareVideo = {
+	width: 1080,
+	height: 1080,
+};
+
 export const RemotionRoot: React.FC = () => {
 	return (
 		<>
@@ -23,10 +28,12 @@ export const RemotionRoot: React.FC = () => {
 				component={HorizontalBarsStar}
 				durationInFrames={240}
 				fps={30}
-				{...horizontalVideo}
+				// {...horizontalVideo}
+				{...squareVideo}
 				schema={horizontalBarsStarSchema}
 				defaultProps={{
 					titleText: 'Top 10 Bundesliga Teams - 15. Oktober 2023',
+					titleFontSize: 48,
 					titleColor: '#0e2921',
 					backgroundColor: '#3ba587',
 					progressColor: '#0e2921',

@@ -39,6 +39,10 @@ const logos = {
 		name: '1. FC Heidenheim',
 		logo: 'https://ssl.gstatic.com/onebox/media/sports/logos/Nqpb8Rl6ShUtB0ClAKRw-g_48x48.png',
 	},
+	augsburg: {
+		name: 'Augsburg',
+		logo: 'https://ssl.gstatic.com/onebox/media/sports/logos/gjz1Ml0qpVQuY3leN4z8mQ_48x48.png',
+	},
 };
 
 export default logos;

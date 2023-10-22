@@ -31,7 +31,7 @@ export const SimpleTitle: React.FC<{
 						fontSize,
 						fontFamily: 'sans-serif',
 						marginLeft: 40 - (1 - zero_to_1) * 1500,
-						fontWeight: 300,
+						fontWeight: 500,
 					}}
 				>
 					{children}

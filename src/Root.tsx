@@ -1,19 +1,18 @@
 import {Composition} from 'remotion';
 import {MyComposition, myCompSchema} from './Composition';
-import {ChangeBars, changeBarsSchema} from './ChangeBars';
 import {
 	HorizontalBarsStar,
 	horizontalBarsStarSchema,
 } from './HorizontalBarsStar/HorizontalBarsStar';
 
-import dataItems from './data/bundesliga/bundesliga';
+import bundesligaBarChart from './data/bundesliga/bundesliga';
 
 import './style.css';
 
-const horizontalVideo = {
-	width: 1920,
-	height: 1080,
-};
+// const horizontalVideo = {
+// 	width: 1920,
+// 	height: 1080,
+// };
 
 const squareVideo = {
 	width: 1080,
@@ -28,32 +27,15 @@ export const RemotionRoot: React.FC = () => {
 				component={HorizontalBarsStar}
 				durationInFrames={240}
 				fps={30}
-				// {...horizontalVideo}
 				{...squareVideo}
 				schema={horizontalBarsStarSchema}
 				defaultProps={{
-					titleText: 'Top 10 Bundesliga Teams - 15. Oktober 2023',
-					titleFontSize: 48,
-					titleColor: '#0e2921',
-					backgroundColor: '#3ba587',
-					progressColor: '#0e2921',
-					items: dataItems,
-				}}
-			/>
-			<Composition
-				id="ChangeBars"
-				component={ChangeBars}
-				durationInFrames={240}
-				fps={30}
-				width={1280}
-				height={720}
-				schema={changeBarsSchema}
-				defaultProps={{
-					titleText: 'Welcome to ChangeBars with Tailwind CSS',
-					titleColor: '#000000',
-					logoColor: '#f05122',
-					previousValue: 10,
-					currentValue: 20,
+					titleText: `Top 10 Bundesliga Teams - ${bundesligaBarChart.dateLabel}`,
+					titleFontSize: 44,
+					titleColor: bundesligaBarChart.colors.title,
+					backgroundColor: bundesligaBarChart.colors.background,
+					progressColor: bundesligaBarChart.colors.progress,
+					items: bundesligaBarChart.items,
 				}}
 			/>
 			<Composition

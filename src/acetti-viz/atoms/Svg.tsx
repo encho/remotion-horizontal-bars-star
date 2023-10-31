@@ -10,12 +10,9 @@ type TSvgProps = {
 };
 
 export default function Svg({width, height, children, style = {}}: TSvgProps) {
-	// const {theme} = useAppTheme();
-	// const defaultStrokeColor = theme.colors.Svg.debugStrokeColor;
-	// const defaultStrokeColor = theme.mainColor;
-	const defaultStrokeColor = '#00ff00';
+	const defaultStrokeColor = 'magenta';
 
-	const debugStyle = {border: `1px solid ${defaultStrokeColor}`};
+	const debugStyle = {border: `3px solid ${defaultStrokeColor}`};
 
 	return (
 		<svg

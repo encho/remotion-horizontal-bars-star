@@ -14,10 +14,10 @@ import {useRef, useEffect, useState} from 'react';
 // TODO
 // implement this design: https://polygon.io/blog/universal-snapshot
 
-import {Watermark} from '../GenericTools/Watermark';
+// import {Watermark} from '../GenericTools/Watermark';
 import {SlideIn} from '../SlideIn';
 import {SlideTitleSequence} from '../slides/SlideTitleSequence';
-import {useSlide} from '../slides/useSlide';
+// import {useSlide} from '../slides/useSlide';
 import {LineChartBody} from './LineChartBody';
 
 export const simpleLineChartSchema = z.object({
@@ -33,6 +33,7 @@ export const simpleLineChartSchema = z.object({
 		)
 		.nullable(),
 	watermark: z.optional(z.boolean()),
+	showLineChartLayout: z.optional(z.boolean()),
 	styling: z.object({
 		backgroundColor: zColor(),
 		titleColor: zColor(),
@@ -40,15 +41,23 @@ export const simpleLineChartSchema = z.object({
 		yLabelsColor: zColor(),
 		xLabelsColor: zColor(),
 		lineColor: zColor(),
+		//
 		titleFontSize: z.number(),
 		subTitleFontSize: z.number(),
 		yAxisAreaWidth: z.number(),
+		lineStrokeWidth: z.number(),
+		lineCircleRadius: z.number(),
+		yTickValuesFontSize: z.number(),
+		xTickValuesFontSize: z.number(),
+		xAxisAreaHeight: z.number(),
+		gridLinesStrokeWidth: z.number(),
+		yAxisAreaMarginLeft: z.number(),
 	}),
 });
 
 export const SimpleLineChart: React.FC<
 	z.infer<typeof simpleLineChartSchema>
-> = ({data, title, subtitle, watermark, styling}) => {
+> = ({data, title, subtitle, styling, showLineChartLayout}) => {
 	// TODO use tiny-invariant
 	if (data === null) {
 		throw new Error('Data was not fetched');
@@ -74,13 +83,10 @@ export const SimpleLineChart: React.FC<
 	}, []);
 
 	const frame = useCurrentFrame();
-	const {durationInFrames, width, height} = useVideoConfig();
-
-	// TODO replace baselines with rem!
-	const {baselines} = useSlide({width, height});
-
-	// TODO transform to rem()
-	// const baselines =
+	const {
+		durationInFrames,
+		// width, height
+	} = useVideoConfig();
 
 	// Fade out the animation at the end
 	const opacity = interpolate(
@@ -117,13 +123,20 @@ export const SimpleLineChart: React.FC<
 								areaWidth={chartElementWidth}
 								areaHeight={chartElementHeight}
 								data={data}
-								baselines={baselines}
+								showLayout={showLineChartLayout}
 								styling={{
 									gridLinesColor: styling.gridLinesColor,
 									yLabelsColor: styling.yLabelsColor,
 									xLabelsColor: styling.xLabelsColor,
 									lineColor: styling.lineColor,
 									yAxisAreaWidth: styling.yAxisAreaWidth,
+									lineStrokeWidth: styling.lineStrokeWidth,
+									lineCircleRadius: styling.lineCircleRadius,
+									yTickValuesFontSize: styling.yTickValuesFontSize,
+									xTickValuesFontSize: styling.xTickValuesFontSize,
+									xAxisAreaHeight: styling.xAxisAreaHeight,
+									gridLinesStrokeWidth: styling.gridLinesStrokeWidth,
+									yAxisAreaMarginLeft: styling.yAxisAreaMarginLeft,
 								}}
 							/>
 						</SlideIn>
@@ -131,7 +144,7 @@ export const SimpleLineChart: React.FC<
 				</div>
 			</div>
 
-			<Watermark watermark={watermark} baselines={baselines} />
+			{/* <Watermark watermark={watermark} baselines={baselines} /> */}
 			{/* <ProgressBar
 				progressBar={progressBar}
 				theme={theme}

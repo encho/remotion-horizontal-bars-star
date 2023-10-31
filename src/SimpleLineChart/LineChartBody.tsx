@@ -15,19 +15,26 @@ export function LineChartBody({
 	areaWidth,
 	areaHeight,
 	data,
-	baselines,
 	styling,
+	showLayout = false,
 }: {
 	areaWidth: number;
 	areaHeight: number;
 	data: {index: number; value: number; label: string}[];
-	baselines: (n: number) => number;
+	showLayout?: boolean;
 	styling: {
 		gridLinesColor: string;
 		yLabelsColor: string;
 		xLabelsColor: string;
 		lineColor: string;
 		yAxisAreaWidth: number;
+		lineStrokeWidth: number;
+		lineCircleRadius: number;
+		yTickValuesFontSize: number;
+		xTickValuesFontSize: number;
+		xAxisAreaHeight: number;
+		gridLinesStrokeWidth: number;
+		yAxisAreaMarginLeft: number;
 	};
 }) {
 	const frame = useCurrentFrame();
@@ -35,11 +42,11 @@ export function LineChartBody({
 
 	const chartRowsRailSpec: TGridRailSpec = [
 		{type: 'fr', value: 1, name: 'plot'},
-		{type: 'pixel', value: baselines(5), name: 'xAxis'},
+		{type: 'pixel', value: styling.xAxisAreaHeight, name: 'xAxis'},
 	];
 	const chartColsRailSpec: TGridRailSpec = [
 		{type: 'fr', value: 1, name: 'plot'},
-		{type: 'pixel', value: baselines(0.5), name: 'space'},
+		{type: 'pixel', value: styling.yAxisAreaMarginLeft, name: 'space'},
 		{type: 'pixel', value: styling.yAxisAreaWidth, name: 'yAxis'},
 	];
 
@@ -105,7 +112,7 @@ export function LineChartBody({
 		<div style={{position: 'relative'}}>
 			<div style={{position: 'absolute'}}>
 				<DisplayGridLayout
-					hide
+					hide={!showLayout}
 					areas={chartLayout.areas}
 					width={areaWidth}
 					height={areaHeight}
@@ -129,7 +136,7 @@ export function LineChartBody({
 									y1={yScale(tickValue)}
 									y2={yScale(tickValue)}
 									stroke={styling.gridLinesColor}
-									strokeWidth={baselines(0.1)}
+									strokeWidth={styling.gridLinesStrokeWidth}
 								/>
 							</g>
 						);
@@ -137,14 +144,12 @@ export function LineChartBody({
 
 					{/* y ticks */}
 					{tickValues.map((tickValue) => {
-						const padding = baselines(0.5);
-						const textWidth = baselines(3);
 						return (
 							<g key={tickValue}>
 								<text
-									x={chartLayout.areas.yAxis.x1 + padding + textWidth}
+									x={chartLayout.areas.yAxis.x2}
 									y={yScale(tickValue)}
-									fontSize={baselines(2)}
+									fontSize={styling.yTickValuesFontSize}
 									fill={styling.yLabelsColor}
 									textAnchor="end"
 									alignmentBaseline="central"
@@ -161,11 +166,11 @@ export function LineChartBody({
 							<g key={i}>
 								<text
 									textAnchor="middle"
-									alignmentBaseline="hanging"
+									alignmentBaseline="baseline"
 									fill={styling.xLabelsColor}
-									fontSize={baselines(2)}
+									fontSize={styling.xTickValuesFontSize}
 									x={xScale(it.index)}
-									y={chartLayout.areas.xAxis.y1 + baselines(1.5)}
+									y={chartLayout.areas.xAxis.y2}
 								>
 									{it.label}
 								</text>
@@ -180,7 +185,7 @@ export function LineChartBody({
 								strokeDasharray={evolvedPath.strokeDasharray}
 								strokeDashoffset={evolvedPath.strokeDashoffset}
 								stroke={styling.lineColor}
-								strokeWidth={baselines(0.5)}
+								strokeWidth={styling.lineStrokeWidth}
 								fill="transparent"
 							/>
 
@@ -188,7 +193,7 @@ export function LineChartBody({
 								cx={pointAtLength.x}
 								cy={pointAtLength.y}
 								fill={styling.lineColor}
-								r={baselines(0.75)}
+								r={styling.lineCircleRadius}
 							/>
 						</g>
 					) : null}

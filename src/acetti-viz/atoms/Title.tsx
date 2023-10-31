@@ -6,11 +6,11 @@ type TTitleProps = {
 };
 
 export default function Title({area, text}: TTitleProps) {
-	// TODO from theme
-	const defaultTextColor = 'hsla(20, 100%, 64%, 1.0)';
+	const defaultTextColor = '#000000';
 
 	return (
 		<text
+			opacity={0.1}
 			x={area.width / 2}
 			y={area.height / 2}
 			style={{

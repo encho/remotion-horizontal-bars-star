@@ -47,8 +47,8 @@ function AreaRect({
 	// const {theme} = useAppTheme();
 	// const defaultFillColor = theme.DisplayGridLayout.Area.backgroundColor;
 	// const defaultStrokeColor = theme.DisplayGridLayout.Area.borderColor;
-	const defaultFillColor = '#ff0000';
-	const defaultStrokeColor = '#ffff00';
+	const defaultFillColor = 'rgba(0,0,0,0.2)';
+	const defaultStrokeColor = 'magenta';
 
 	const strokeColor = stroke
 		? stroke

@@ -9,7 +9,10 @@ import {
 	bundesligaTop10BarChartSchema,
 } from './BundesligaTop10BarChart/BundesligaTop10BarChart';
 
-import {SimpleLineChart} from './SimpleLineChart/SimpleLineChart';
+import {
+	SimpleLineChart,
+	simpleLineChartSchema,
+} from './SimpleLineChart/SimpleLineChart';
 
 import './style.css';
 
@@ -28,13 +31,9 @@ export const RemotionRoot: React.FC = () => {
 				component={SimpleLineChart}
 				durationInFrames={240}
 				// 	(INPUT_PROPS?.durationSecs ?? DEFAULT_DURATION_SECONDS) *
-				// 	DEFAULT_FRAMES_PER_SECOND
-				// }
-				// durationInFrames={3 * 30}
 				fps={30}
 				{...squareVideo}
-				// You can override these props for each render:
-				// https://www.remotion.dev/docs/parametrized-rendering
+				schema={simpleLineChartSchema}
 				defaultProps={{
 					title: 'S&P500 Performance',
 					subtitle: 'Prices in USD',
@@ -53,14 +52,16 @@ export const RemotionRoot: React.FC = () => {
 						{index: 11, value: 29, label: 'D'},
 					],
 					styling: {
+						titleFontSize: 60,
+						subTitleFontSize: 40,
 						backgroundColor: '#FFFDD0',
 						titleColor: '#6F5B3E',
 						gridLinesColor: '#C4AE78',
 						yLabelsColor: '#C4AE78',
 						xLabelsColor: '#C4AE78',
 						lineColor: '#f05122',
+						yAxisAreaWidth: 75,
 					},
-					// theme: DEFAULT_THEME_ID,
 					// watermark: true,
 				}}
 			/>

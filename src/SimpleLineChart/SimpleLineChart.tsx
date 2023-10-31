@@ -4,61 +4,83 @@ import {
 	Sequence,
 	useCurrentFrame,
 	useVideoConfig,
+	delayRender,
+	continueRender,
 } from 'remotion';
-// import invariant from 'tiny-invariant';
+import {zColor} from '@remotion/zod-types';
+import {z} from 'zod';
+import {useRef, useEffect, useState} from 'react';
 
 // TODO
 // implement this design: https://polygon.io/blog/universal-snapshot
 
-import {GridAreaDiv} from '../acetti-viz/atoms/GridAreaDiv';
-// import {ProgressBar} from '../GenericTools/ProgressBar';
 import {Watermark} from '../GenericTools/Watermark';
 import {SlideIn} from '../SlideIn';
-import {LayoutDisplay} from '../slides/LayoutDisplay';
 import {SlideTitleSequence} from '../slides/SlideTitleSequence';
 import {useSlide} from '../slides/useSlide';
 import {LineChartBody} from './LineChartBody';
 
-// import {allThemes, Theme, ThemeId} from '../theme';
+export const simpleLineChartSchema = z.object({
+	title: z.string(),
+	subtitle: z.string(),
+	data: z
+		.array(
+			z.object({
+				index: z.number(),
+				value: z.number(),
+				label: z.string(),
+			})
+		)
+		.nullable(),
+	watermark: z.optional(z.boolean()),
+	styling: z.object({
+		backgroundColor: zColor(),
+		titleColor: zColor(),
+		gridLinesColor: zColor(),
+		yLabelsColor: zColor(),
+		xLabelsColor: zColor(),
+		lineColor: zColor(),
+		titleFontSize: z.number(),
+		subTitleFontSize: z.number(),
+		yAxisAreaWidth: z.number(),
+	}),
+});
 
-export const SimpleLineChart: React.FC<{
-	title: string;
-	subtitle: string;
-	data: {index: number; value: number; label: string}[];
-	// theme: ThemeId;
-	watermark?: boolean;
-	// progressBar?: boolean;
-	styling: {
-		backgroundColor: string;
-		titleColor: string;
-		gridLinesColor: string;
-		yLabelsColor: string;
-		xLabelsColor: string;
-		lineColor: string;
-	};
-}> = ({
-	data,
-	// theme: themeId,
-	title,
-	subtitle,
-	watermark,
-	// progressBar,
-	styling,
-}) => {
-	// const theme = allThemes.find((it: Theme) => it.name === themeId);
-	// invariant(theme);
+export const SimpleLineChart: React.FC<
+	z.infer<typeof simpleLineChartSchema>
+> = ({data, title, subtitle, watermark, styling}) => {
+	// TODO use tiny-invariant
+	if (data === null) {
+		throw new Error('Data was not fetched');
+	}
 
+	// TODO implement fontloader for our case here
+	// ... for now more low level, i.e. pass fonts in directly
+	// ... later on we may abstract towards theme again
 	// useFontsLoader(theme);
 
-	const frame = useCurrentFrame();
-	const {
-		durationInFrames,
-		// fps,
-		width,
-		height,
-	} = useVideoConfig();
+	const [chartElementHeight, setChartElementHeight] = useState(0);
+	const [chartElementWidth, setChartElementWidth] = useState(0);
 
-	const {layout, baselines} = useSlide({width, height});
+	const chartElementRef = useRef(null);
+
+	useEffect(() => {
+		const handle = delayRender('before measuring chart element height');
+		// @ts-ignore
+		setChartElementHeight(chartElementRef.current.offsetHeight);
+		// @ts-ignore
+		setChartElementWidth(chartElementRef.current.offsetWidth);
+		continueRender(handle);
+	}, []);
+
+	const frame = useCurrentFrame();
+	const {durationInFrames, width, height} = useVideoConfig();
+
+	// TODO replace baselines with rem!
+	const {baselines} = useSlide({width, height});
+
+	// TODO transform to rem()
+	// const baselines =
 
 	// Fade out the animation at the end
 	const opacity = interpolate(
@@ -71,64 +93,45 @@ export const SimpleLineChart: React.FC<{
 		}
 	);
 
-	// A <AbsoluteFill> is just a absolutely positioned <div>!
 	return (
-		// <AbsoluteFill style={{backgroundColor: theme.background}}>
 		<AbsoluteFill style={{backgroundColor: styling.backgroundColor}}>
-			<LayoutDisplay
-				hide
-				baseline={baselines(1)}
-				width={width}
-				height={height}
-				layout={layout}
-			/>
+			<div className="flex flex-col h-full p-12">
+				<div className="pb-16">
+					<Sequence from={0} durationInFrames={durationInFrames} layout="none">
+						<SlideTitleSequence
+							title={title}
+							subTitle={subtitle}
+							styling={{
+								titleColor: styling.titleColor,
+								subTitleColor: styling.titleColor,
+								titleFontSize: styling.titleFontSize,
+								subTitleFontSize: styling.subTitleFontSize,
+							}}
+						/>
+					</Sequence>
+				</div>
+				<div ref={chartElementRef} className="flex-auto" style={{opacity}}>
+					<Sequence from={15} layout="none">
+						<SlideIn>
+							<LineChartBody
+								areaWidth={chartElementWidth}
+								areaHeight={chartElementHeight}
+								data={data}
+								baselines={baselines}
+								styling={{
+									gridLinesColor: styling.gridLinesColor,
+									yLabelsColor: styling.yLabelsColor,
+									xLabelsColor: styling.xLabelsColor,
+									lineColor: styling.lineColor,
+									yAxisAreaWidth: styling.yAxisAreaWidth,
+								}}
+							/>
+						</SlideIn>
+					</Sequence>
+				</div>
+			</div>
 
-			<Sequence from={0} durationInFrames={durationInFrames}>
-				<SlideTitleSequence
-					slideLayout={layout}
-					title={title}
-					subTitle={subtitle}
-					styling={{
-						titleColor: styling.titleColor,
-						subTitleColor: styling.titleColor,
-					}}
-				/>
-			</Sequence>
-			<Sequence from={10}>
-				<SlideIn>
-					{/* <SlideOut> */}
-					<GridAreaDiv
-						layout={layout}
-						area="body"
-						fill="transparent"
-						opacity={opacity}
-					>
-						{({areaWidth, areaHeight}) => {
-							return (
-								<LineChartBody
-									areaWidth={areaWidth}
-									areaHeight={areaHeight}
-									data={data}
-									baselines={baselines}
-									styling={{
-										gridLinesColor: styling.gridLinesColor,
-										yLabelsColor: styling.yLabelsColor,
-										xLabelsColor: styling.xLabelsColor,
-										lineColor: styling.lineColor,
-									}}
-								/>
-							);
-						}}
-					</GridAreaDiv>
-					{/* </SlideOut> */}
-				</SlideIn>
-			</Sequence>
-
-			<Watermark
-				watermark={watermark}
-				// theme={theme}
-				baselines={baselines}
-			/>
+			<Watermark watermark={watermark} baselines={baselines} />
 			{/* <ProgressBar
 				progressBar={progressBar}
 				theme={theme}

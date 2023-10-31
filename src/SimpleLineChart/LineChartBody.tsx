@@ -11,8 +11,6 @@ import {
 	useGridLayout,
 } from '../acetti-viz';
 
-// import type {Theme} from '../theme';
-
 export function LineChartBody({
 	areaWidth,
 	areaHeight,
@@ -29,6 +27,7 @@ export function LineChartBody({
 		yLabelsColor: string;
 		xLabelsColor: string;
 		lineColor: string;
+		yAxisAreaWidth: number;
 	};
 }) {
 	const frame = useCurrentFrame();
@@ -41,13 +40,8 @@ export function LineChartBody({
 	const chartColsRailSpec: TGridRailSpec = [
 		{type: 'fr', value: 1, name: 'plot'},
 		{type: 'pixel', value: baselines(0.5), name: 'space'},
-		{type: 'pixel', value: baselines(3), name: 'yAxis'},
-		{type: 'pixel', value: baselines(3), name: 'marginRight'},
+		{type: 'pixel', value: styling.yAxisAreaWidth, name: 'yAxis'},
 	];
-
-	// const valueFontSize = baselines(3.5);
-	// const labelFontSize = baselines(2.5);
-	// const labelAreaHeight = baselines(3);
 
 	const chartGridLayoutSpec = {
 		padding: 0,
@@ -83,16 +77,11 @@ export function LineChartBody({
 		gridLayoutSpec: chartGridLayoutSpec,
 	});
 
-	// TODO dependent on resolution
-	// const labelAreaHeight = 100;
-	// const barAreaHeight = areaHeight - labelAreaHeight;
-
 	const xScale = scaleLinear()
 		.domain([
 			min(data.map((it) => it.index)) as number,
 			max(data.map((it) => it.index)) as number,
 		])
-		// .range([0, areaWidth]);
 		.range([chartLayout.areas.plot.x1, chartLayout.areas.plot.x2]);
 
 	const yScale = scaleLinear()
@@ -105,34 +94,22 @@ export function LineChartBody({
 	// .curve(curveBasis);
 	// .curve(curveCatmullRom.alpha(0.5));
 
-	// const values = data.map(({ value }: any) => value);
-	// const minValue = min(values) as number;
-	// const maxValue = max(values) as number;
-
-	// const yAxis = axisLeft(yScale);
-
 	const d = linePath(data) || '';
-
 	const pathLength = d ? getLength(d) : 0;
-
 	const percentageAnimation = Math.min(frame / (durationInFrames / 2), 1);
-
 	const pointAtLength = getPointAtLength(d, percentageAnimation * pathLength);
-
 	const evolvedPath = evolvePath(percentageAnimation, d);
-
 	const tickValues = yScale.nice().ticks(5);
 
 	return (
 		<div style={{position: 'relative'}}>
 			<div style={{position: 'absolute'}}>
-				{false ? (
-					<DisplayGridLayout
-						areas={chartLayout.areas}
-						width={areaWidth}
-						height={areaHeight}
-					/>
-				) : null}
+				<DisplayGridLayout
+					hide
+					areas={chartLayout.areas}
+					width={areaWidth}
+					height={areaHeight}
+				/>
 			</div>
 			<div style={{position: 'absolute'}}>
 				<svg
@@ -161,20 +138,15 @@ export function LineChartBody({
 					{/* y ticks */}
 					{tickValues.map((tickValue) => {
 						const padding = baselines(0.5);
-						// const textWidth = baselines(4);
 						const textWidth = baselines(3);
 						return (
 							<g key={tickValue}>
 								<text
 									x={chartLayout.areas.yAxis.x1 + padding + textWidth}
 									y={yScale(tickValue)}
-									// fontSize={baselines(3)}
 									fontSize={baselines(2)}
-									// fontFamily={theme.fonts.text.name}
-									// fontFamily={theme.fonts.text.name}
 									fill={styling.yLabelsColor}
 									textAnchor="end"
-									// textAnchor="start"
 									alignmentBaseline="central"
 								>
 									{tickValue}

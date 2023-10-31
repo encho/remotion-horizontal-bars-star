@@ -3,6 +3,7 @@ import {AbsoluteFill, Img} from 'remotion';
 // import {Theme} from '../theme';
 
 export const Watermark: React.FC<{
+	// watermark?: boolean | null;
 	watermark?: boolean;
 	// theme: Theme;
 	baselines: (n: number) => number;

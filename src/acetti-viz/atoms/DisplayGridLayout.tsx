@@ -8,18 +8,20 @@ type TDisplayGridLayoutProps = {
 	width: number;
 	height: number;
 	areas: {[k: string]: TGridLayoutArea};
+	hide?: boolean;
 };
 
 export default function DisplayGridLayout({
 	width,
 	height,
 	areas,
+	hide = false,
 }: TDisplayGridLayoutProps) {
+	if (hide) {
+		return <div />;
+	}
 	return (
 		<div style={{position: 'relative'}}>
-			{/* <div style={{position: 'absolute', color: 'white', left: 20}}>
-				<h1>DisplayGridLayout</h1>
-			</div> */}
 			<Svg width={width} height={height}>
 				{toPairs(areas).map(([name, area]) => (
 					<Area key={name} area={area} show>

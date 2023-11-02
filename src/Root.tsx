@@ -37,20 +37,21 @@ export const RemotionRoot: React.FC = () => {
 				defaultProps={{
 					title: 'S&P500 Performance',
 					subtitle: 'Prices in USD',
-					data: [
-						{index: 0, value: 10, label: 'J'},
-						{index: 1, value: 30, label: 'F'},
-						{index: 2, value: 20, label: 'M'},
-						{index: 3, value: 20, label: 'A'},
-						{index: 4, value: 18, label: 'M'},
-						{index: 5, value: 25, label: 'J'},
-						{index: 6, value: 15, label: 'J'},
-						{index: 7, value: 28, label: 'A'},
-						{index: 8, value: 32, label: 'S'},
-						{index: 9, value: 37, label: 'O'},
-						{index: 10, value: 32, label: 'N'},
-						{index: 11, value: 29, label: 'D'},
-					],
+					// data: [
+					// 	{index: 0, value: 10, label: 'J'},
+					// 	{index: 1, value: 30, label: 'F'},
+					// 	{index: 2, value: 20, label: 'M'},
+					// 	{index: 3, value: 20, label: 'A'},
+					// 	{index: 4, value: 18, label: 'M'},
+					// 	{index: 5, value: 25, label: 'J'},
+					// 	{index: 6, value: 15, label: 'J'},
+					// 	{index: 7, value: 28, label: 'A'},
+					// 	{index: 8, value: 32, label: 'S'},
+					// 	{index: 9, value: 37, label: 'O'},
+					// 	{index: 10, value: 32, label: 'N'},
+					// 	{index: 11, value: 29, label: 'D'},
+					// ],
+					data: null,
 					styling: {
 						titleFontSize: 100,
 						subTitleFontSize: 40,
@@ -71,6 +72,36 @@ export const RemotionRoot: React.FC = () => {
 					},
 					showLineChartLayout: false,
 				}}
+				calculateMetadata={async ({props}) => {
+					// const apiUrl =
+					// 	'http://127.0.0.1:5000/flics/simple-price-chart?ticker=AAA';
+
+					const apiUrl =
+						'http://127.0.0.1:5000/flics/simple-price-chart?ticker=BTC-USD&&endDate=2023-10-31T15:36:06.837Z&timePeriod=1Y';
+
+					const data = await fetch(apiUrl);
+					const json = await data.json();
+
+					console.log(json.data);
+					return {
+						props: {
+							...props,
+							data: json.data,
+							title: json.title,
+							subtitle: json.subtitle,
+						},
+					};
+				}}
+				// calculateMetadata={async ({props}) => {
+				// 	const apiUrl = `https://api.openligadb.de/getbltable/bl1/${2023}`;
+				// 	const data = await fetch(apiUrl);
+				// 	return props;
+				// }}
+				// calculateMetadata={async ({props}) => {
+				// 	const result = await yahooFinance.quoteSummary('AAPL');
+				// 	console.log(result);
+				// 	return {...props};
+				// }}
 			/>
 
 			<Composition

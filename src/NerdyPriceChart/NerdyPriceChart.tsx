@@ -1,77 +1,125 @@
-import {AbsoluteFill} from 'remotion';
+import {AbsoluteFill, delayRender, continueRender} from 'remotion';
 import {z} from 'zod';
-import {HorizontalBarsStar} from '../HorizontalBarsStar/HorizontalBarsStar';
+import {useEffect, useState} from 'react';
 
-const COLORS = {
-	background: '#1c2541',
-	text: '#CAD8DE',
-	placements: {
-		champions: '#76E7CD',
-		uefa: '#9B7EDE',
-		uefaConference: '#C45BAA',
-	},
-};
+import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
+
+// TODOS
+// optional styling for this via 'styling' props, to be merded with defaults
+// theme 'DARK' | 'BRIGHT' enum prop
+// add logo of nerdy at the bottom
+// load correct nerdy fonts
+// improve x axis to account for series length flexibly
+// nice to have: automatically determine necessary space for y axis
 
 export const nerdyPriceChartSchema = z.object({
-	// TODO use perhaps an enum?
 	ticker: z.string(),
-	// dateString: z.string(),
-	// apiData: z
-	// 	.array(
-	// 		z.object({
-	// 			teamName: z.string(),
-	// 			points: z.number(),
-	// 			matches: z.number(),
-	// 			teamIconUrl: z.string(),
-	// 		})
-	// 	)
-	// 	.nullable(),
+	timePeriod: z.enum(['1M', '3M', '1Y', '2Y', 'YTD', 'QTD']),
+	nerdyFinanceEnv: z.enum(['DEV', 'STAGE', 'PROD']),
 });
+
+type TNerdyPriceChartApiResult = {
+	title: string;
+	subtitle: string;
+	data: {value: number; index: Date}[];
+};
 
 export const NerdyPriceChart: React.FC<
 	z.infer<typeof nerdyPriceChartSchema>
-> = ({ticker}) => {
-	// TODO use tiny-invariant
-	// if (apiData === null) {
-	// 	throw new Error('Data was not fetched');
-	// }
+> = ({ticker, timePeriod, nerdyFinanceEnv}) => {
+	// TODO from props
+	const endDate = '2023-10-31T15:36:06.837Z';
+	// const timePeriod = '1M';
 
-	// const horizontalBarsStartDataItems = apiData
-	// 	.filter((_it, i) => i < 10)
-	// 	.map((it, i) => {
-	// 		return {
-	// 			label: it.teamName,
-	// 			description: `${it.points} Punkte`,
-	// 			value: it.points,
-	// 			colors: {
-	// 				background: COLORS.background,
-	// 				text: COLORS.text,
-	// 				border:
-	// 					i < 4
-	// 						? COLORS.placements.champions
-	// 						: i === 4
-	// 						? COLORS.placements.uefa
-	// 						: i === 5
-	// 						? COLORS.placements.uefaConference
-	// 						: 'transparent',
-	// 			},
-	// 			imageSource: it.teamIconUrl,
-	// 		};
-	// 	});
+	const [apiResult, setApiResult] = useState<null | TNerdyPriceChartApiResult>(
+		null
+	);
 
-	// const horizontalBarsStarProps = {
-	// 	titleText: `Top 10 Bundesliga Teams | ${dateString}`,
-	// 	titleFontSize: 44,
-	// 	titleColor: '#CAD8DE',
-	// 	backgroundColor: '#0b132b',
-	// 	progressColor: '#CAD8DE',
-	// 	items: horizontalBarsStartDataItems,
-	// };
+	useEffect(() => {
+		const handle = delayRender('FETCH_API_DATA');
+		async function fetchAndSetData() {
+			try {
+				const response = await fetchNerdyFinancePriceCharts(
+					{
+						ticker,
+						endDate,
+						timePeriod,
+					},
+					nerdyFinanceEnv
+				);
+				setApiResult(response);
+				continueRender(handle);
+			} catch (error) {
+				// Handle any errors
+			}
+		}
+		fetchAndSetData();
+	}, [ticker, timePeriod, endDate, nerdyFinanceEnv]);
 
 	return (
 		<AbsoluteFill>
-			<h1 className="text-4xl text-yellow-700">NerdyPriceChart</h1>
-			<h1 className="text-4xl text-yellow-700">{ticker}</h1>
+			{apiResult ? (
+				<SimpleLineChart
+					title={apiResult.title}
+					subtitle={apiResult.subtitle}
+					data={apiResult.data}
+					styling={{
+						titleFontSize: 75,
+						subTitleFontSize: 40,
+						backgroundColor: '#FFFDD0',
+						titleColor: '#6F5B3E',
+						gridLinesColor: '#ede0c0',
+						yLabelsColor: '#C4AE78',
+						xLabelsColor: '#C4AE78',
+						lineColor: '#00c278',
+						yAxisAreaWidth: 128,
+						lineStrokeWidth: 10,
+						lineCircleRadius: 16,
+						yTickValuesFontSize: 40,
+						xTickValuesFontSize: 40,
+						xAxisAreaHeight: 60,
+						gridLinesStrokeWidth: 3,
+						yAxisAreaMarginLeft: 20,
+						xTickValuesLength: 15,
+						xTickValuesWidth: 2,
+						xTickValuesColor: '#ede0c0',
+					}}
+					showLineChartLayout={false}
+				/>
+			) : null}
 		</AbsoluteFill>
 	);
+};
+
+type NerdyFinancePriceChartsArgs = {
+	ticker: string;
+	endDate: string;
+	timePeriod: '1M' | '3M' | '1Y' | '2Y' | 'YTD' | 'QTD';
+};
+
+const fetchNerdyFinancePriceCharts = async (
+	{ticker, endDate, timePeriod}: NerdyFinancePriceChartsArgs,
+	nerdyFinanceEnv: 'DEV' | 'STAGE' | 'PROD'
+): Promise<TNerdyPriceChartApiResult> => {
+	const apiBase = nerdyFinanceEnv === 'DEV' ? 'http://127.0.0.1:5000' : null;
+
+	const apiUrl = `${apiBase}/flics/simple-price-chart?ticker=${ticker}&&endDate=${endDate}&timePeriod=${timePeriod}`;
+
+	const data = await fetch(apiUrl);
+
+	const json = await data.json();
+
+	// TODO validate a specific return type
+	// maybe with zod it is possible?
+	// TODO parse within the component!
+	const parsedData = json.data.map((it: {value: number; index: string}) => ({
+		value: it.value,
+		index: new Date(it.index),
+	}));
+
+	return {
+		data: parsedData,
+		title: json.title,
+		subtitle: json.subtitle,
+	};
 };

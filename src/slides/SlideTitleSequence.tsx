@@ -1,13 +1,35 @@
 import {Sequence, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {useMemo} from 'react';
 import {SlideIn} from '../SlideIn';
+
+import availableFontSpecs, {FontFamiliesUnionType} from '../fontSpecs';
+import {useFontsLoader} from '../useFontsLoader';
+
+function uniqueStrings(inputArray: string[]): string[] {
+	// Create a Set to store unique strings
+	const uniqueSet = new Set<string>();
+
+	// Add the strings from the input array to the Set
+	inputArray.forEach((str) => uniqueSet.add(str));
+
+	// Convert the Set back to an array
+	const uniqueArray = Array.from(uniqueSet);
+
+	return uniqueArray;
+}
 
 export function SlideTitleSequence({
 	title,
 	subTitle,
 	styling,
+	// TODO rename to titleFontFamily and subTitleFontFamily perhaps
+	fontFamilyTitle,
+	fontFamilySubtitle,
 }: {
 	title: string;
 	subTitle: string;
+	fontFamilyTitle: FontFamiliesUnionType;
+	fontFamilySubtitle: FontFamiliesUnionType;
 	styling: {
 		titleColor: string;
 		subTitleColor: string;
@@ -15,6 +37,15 @@ export function SlideTitleSequence({
 		subTitleFontSize: number;
 	};
 }) {
+	// load fonts
+	const fontSpecs = useMemo(() => {
+		const fontIds = uniqueStrings([fontFamilyTitle, fontFamilySubtitle]);
+		// @ts-ignore
+		const specs = fontIds.map((it) => availableFontSpecs[it]);
+		return specs;
+	}, [fontFamilyTitle, fontFamilySubtitle]);
+	useFontsLoader(fontSpecs);
+
 	const frame = useCurrentFrame();
 	const {durationInFrames} = useVideoConfig();
 
@@ -35,15 +66,17 @@ export function SlideTitleSequence({
 			<div className="invisible">
 				<h1
 					style={{
+						fontFamily: fontFamilyTitle,
 						fontSize: styling.titleFontSize,
-						opacity,
 						color: styling.titleColor,
+						opacity,
 					}}
 				>
 					{title}
 				</h1>
 				<h2
 					style={{
+						fontFamily: fontFamilySubtitle,
 						fontSize: styling.subTitleFontSize,
 						opacity,
 						color: styling.subTitleColor,
@@ -57,9 +90,10 @@ export function SlideTitleSequence({
 					<SlideIn>
 						<h1
 							style={{
+								fontFamily: fontFamilyTitle,
 								fontSize: styling.titleFontSize,
-								opacity,
 								color: styling.titleColor,
+								opacity,
 							}}
 						>
 							{title}
@@ -70,6 +104,7 @@ export function SlideTitleSequence({
 					<SlideIn>
 						<h2
 							style={{
+								fontFamily: fontFamilySubtitle,
 								fontSize: styling.subTitleFontSize,
 								opacity,
 								color: styling.subTitleColor,

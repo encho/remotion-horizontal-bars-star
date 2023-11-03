@@ -13,16 +13,17 @@ import {useRef, useEffect, useState} from 'react';
 
 // TODO
 // implement this design: https://polygon.io/blog/universal-snapshot
-
 // import {Watermark} from '../GenericTools/Watermark';
 import {SlideIn} from '../SlideIn';
 import {SlideTitleSequence} from '../slides/SlideTitleSequence';
-// import {useSlide} from '../slides/useSlide';
 import {LineChartBody} from './LineChartBody';
+import {fontFamilies} from '../fontSpecs';
 
 export const simpleLineChartSchema = z.object({
 	title: z.string(),
 	subtitle: z.string(),
+	fontFamilyTitle: z.enum(fontFamilies),
+	fontFamilySubtitle: z.enum(fontFamilies),
 	data: z
 		.array(
 			z.object({
@@ -59,22 +60,19 @@ export const simpleLineChartSchema = z.object({
 
 export const SimpleLineChart: React.FC<
 	z.infer<typeof simpleLineChartSchema>
-> = ({data, title, subtitle, styling, showLineChartLayout}) => {
+> = ({
+	data,
+	title,
+	subtitle,
+	styling,
+	showLineChartLayout,
+	fontFamilyTitle,
+	fontFamilySubtitle,
+}) => {
 	// TODO use tiny-invariant
 	if (data === null) {
 		throw new Error('Data was not fetched');
 	}
-
-	// TODO implement fontloader for our case here
-	// ... for now more low level, i.e. pass fonts in directly
-	// ... later on we may abstract towards theme again
-	// useFontsLoader(theme);
-
-	// const [parsedData, setParsedData] = useState(0);
-
-	// const [parsedData, setParsedData] = useState<{index: Date; value: number}[]>(
-	// 	[]
-	// );
 
 	const [chartElementHeight, setChartElementHeight] = useState(0);
 	const [chartElementWidth, setChartElementWidth] = useState(0);
@@ -90,18 +88,8 @@ export const SimpleLineChart: React.FC<
 		continueRender(handle);
 	}, []);
 
-	// useEffect(() => {
-	// 	const handle = delayRender('before parsing data');
-	// 	const x = data.map((it) => ({...it, index: new Date(it.index)}));
-	// 	setParsedData(x);
-	// 	continueRender(handle);
-	// }, [data]);
-
 	const frame = useCurrentFrame();
-	const {
-		durationInFrames,
-		// width, height
-	} = useVideoConfig();
+	const {durationInFrames} = useVideoConfig();
 
 	// Fade out the animation at the end
 	const opacity = interpolate(
@@ -122,6 +110,8 @@ export const SimpleLineChart: React.FC<
 						<SlideTitleSequence
 							title={title}
 							subTitle={subtitle}
+							fontFamilyTitle={fontFamilyTitle}
+							fontFamilySubtitle={fontFamilySubtitle}
 							styling={{
 								titleColor: styling.titleColor,
 								subTitleColor: styling.titleColor,

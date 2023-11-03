@@ -4,6 +4,9 @@ import {useEffect, useState} from 'react';
 
 import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 
+// import availableFontSpecs from '../fontSpecs';
+// import {useFontsLoader} from '../useFontsLoader';
+
 // TODOS
 // load correct nerdy fonts
 // add logo of nerdy at the bottom
@@ -23,6 +26,11 @@ const nerdyThemeDark = {
 	line: '#00FED8',
 	xTicks: '#444444',
 };
+
+// const nerdyFontSpecs = [
+// 	// availableFontSpecs['NotoSansMono-Variable'],
+// 	// availableFontSpecs.SourceSerifPro.Light,
+// ];
 
 export const nerdyPriceChartSchema = z.object({
 	ticker: z.enum([
@@ -76,7 +84,6 @@ export const NerdyPriceChart: React.FC<
 > = ({title, subtitle, ticker, timePeriod, nerdyFinanceEnv, styling = {}}) => {
 	// TODO from props
 	const endDate = '2023-10-31T15:36:06.837Z';
-	// const timePeriod = '1M';
 
 	const [apiResult, setApiResult] = useState<null | TNerdyPriceChartApiResult>(
 		null
@@ -133,6 +140,8 @@ export const NerdyPriceChart: React.FC<
 		<AbsoluteFill>
 			{apiResult ? (
 				<SimpleLineChart
+					fontFamilyTitle="Inter-Bold"
+					fontFamilySubtitle="Inter-Regular"
 					title={title || apiResult.title}
 					subtitle={subtitle || apiResult.subtitle}
 					data={apiResult.data}

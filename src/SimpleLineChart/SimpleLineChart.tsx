@@ -26,9 +26,9 @@ export const simpleLineChartSchema = z.object({
 	data: z
 		.array(
 			z.object({
-				index: z.number(),
+				index: z.date(),
 				value: z.number(),
-				label: z.string(),
+				// label: z.string(),
 			})
 		)
 		.nullable(),
@@ -52,6 +52,9 @@ export const simpleLineChartSchema = z.object({
 		xAxisAreaHeight: z.number(),
 		gridLinesStrokeWidth: z.number(),
 		yAxisAreaMarginLeft: z.number(),
+		xTickValuesLength: z.number(),
+		xTickValuesWidth: z.number(),
+		xTickValuesColor: zColor(),
 	}),
 });
 
@@ -68,6 +71,12 @@ export const SimpleLineChart: React.FC<
 	// ... later on we may abstract towards theme again
 	// useFontsLoader(theme);
 
+	// const [parsedData, setParsedData] = useState(0);
+
+	// const [parsedData, setParsedData] = useState<{index: Date; value: number}[]>(
+	// 	[]
+	// );
+
 	const [chartElementHeight, setChartElementHeight] = useState(0);
 	const [chartElementWidth, setChartElementWidth] = useState(0);
 
@@ -81,6 +90,13 @@ export const SimpleLineChart: React.FC<
 		setChartElementWidth(chartElementRef.current.offsetWidth);
 		continueRender(handle);
 	}, []);
+
+	// useEffect(() => {
+	// 	const handle = delayRender('before parsing data');
+	// 	const x = data.map((it) => ({...it, index: new Date(it.index)}));
+	// 	setParsedData(x);
+	// 	continueRender(handle);
+	// }, [data]);
 
 	const frame = useCurrentFrame();
 	const {
@@ -137,6 +153,9 @@ export const SimpleLineChart: React.FC<
 									xAxisAreaHeight: styling.xAxisAreaHeight,
 									gridLinesStrokeWidth: styling.gridLinesStrokeWidth,
 									yAxisAreaMarginLeft: styling.yAxisAreaMarginLeft,
+									xTickValuesLength: styling.xTickValuesLength,
+									xTickValuesWidth: styling.xTickValuesWidth,
+									xTickValuesColor: styling.xTickValuesColor,
 								}}
 							/>
 						</SlideIn>

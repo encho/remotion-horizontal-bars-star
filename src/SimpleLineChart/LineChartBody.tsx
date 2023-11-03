@@ -1,6 +1,6 @@
 import {evolvePath, getLength, getPointAtLength} from '@remotion/paths';
 import {max, min} from 'd3-array';
-import {scaleLinear} from 'd3-scale';
+import {scaleLinear, scaleTime} from 'd3-scale';
 import {line} from 'd3-shape';
 import {useCurrentFrame, useVideoConfig} from 'remotion';
 
@@ -14,13 +14,14 @@ import {
 export function LineChartBody({
 	areaWidth,
 	areaHeight,
+	// data: unparsedData,
 	data,
 	styling,
 	showLayout = false,
 }: {
 	areaWidth: number;
 	areaHeight: number;
-	data: {index: number; value: number; label: string}[];
+	data: {index: Date; value: number}[];
 	showLayout?: boolean;
 	styling: {
 		gridLinesColor: string;
@@ -35,6 +36,9 @@ export function LineChartBody({
 		xAxisAreaHeight: number;
 		gridLinesStrokeWidth: number;
 		yAxisAreaMarginLeft: number;
+		xTickValuesLength: number;
+		xTickValuesWidth: number;
+		xTickValuesColor: string;
 	};
 }) {
 	const frame = useCurrentFrame();
@@ -84,10 +88,30 @@ export function LineChartBody({
 		gridLayoutSpec: chartGridLayoutSpec,
 	});
 
-	const xScale = scaleLinear()
+	// const xScale = scaleLinear()
+	// 	.domain([
+	// 		min(data.map((it) => it.index)) as number,
+	// 		max(data.map((it) => it.index)) as number,
+	// 	])
+	// 	.range([chartLayout.areas.plot.x1, chartLayout.areas.plot.x2]);
+
+	// const parseData = (d: {index: string; value: number}[]) => {
+	// 	console.log('parsing...');
+	// 	return d.map((it: {index: string; value: number}) => ({
+	// 		value: it.value,
+	// 		index: new Date(it.index) as Date,
+	// 	}));
+	// };
+
+	// const data = parseData(unparsedData);
+
+	const minDate = min(data.map((it) => it.index)) as Date;
+	const maxDate = max(data.map((it) => it.index)) as Date;
+
+	const xScale = scaleTime()
 		.domain([
-			min(data.map((it) => it.index)) as number,
-			max(data.map((it) => it.index)) as number,
+			min(data.map((it) => it.index)) as Date,
+			max(data.map((it) => it.index)) as Date,
 		])
 		.range([chartLayout.areas.plot.x1, chartLayout.areas.plot.x2]);
 
@@ -95,7 +119,7 @@ export function LineChartBody({
 		.domain([max(data.map((it) => it.value)) as number, 0])
 		.range([chartLayout.areas.plot.y1, chartLayout.areas.plot.y2]);
 
-	const linePath = line<{index: number; value: number}>()
+	const linePath = line<{index: Date; value: number}>()
 		.x((d) => xScale(d.index))
 		.y((d) => yScale(d.value));
 	// .curve(curveBasis);
@@ -103,10 +127,29 @@ export function LineChartBody({
 
 	const d = linePath(data) || '';
 	const pathLength = d ? getLength(d) : 0;
-	const percentageAnimation = Math.min(frame / (durationInFrames / 2), 1);
+	// const percentageAnimation = Math.min(frame / (durationInFrames / 2), 1);
+	const percentageAnimation = Math.min(0.25 + frame / durationInFrames, 1);
 	const pointAtLength = getPointAtLength(d, percentageAnimation * pathLength);
 	const evolvedPath = evolvePath(percentageAnimation, d);
 	const tickValues = yScale.nice().ticks(5);
+
+	const xTickValuesMonthBoundaries = generateMonthBoundariesDates(
+		minDate,
+		maxDate
+	);
+
+	const monthStrings = getAllButLast(xTickValuesMonthBoundaries).map((it) =>
+		// TODO paramterrization from props
+		getMonthString(it, 'veryShort')
+	);
+
+	const xTickValuesMonthStartsMapped = xTickValuesMonthBoundaries.map((d) =>
+		xScale(d)
+	);
+
+	const xTickValuesMonthCentroids = calculateAveragesBetweenNumbers(
+		xTickValuesMonthStartsMapped
+	);
 
 	return (
 		<div style={{position: 'relative'}}>
@@ -160,8 +203,23 @@ export function LineChartBody({
 						);
 					})}
 
-					{/* x ticks */}
-					{data.map((it, i) => {
+					{xTickValuesMonthBoundaries.map((it, i) => {
+						return (
+							<g key={i}>
+								<line
+									x1={xScale(it)}
+									x2={xScale(it)}
+									y1={chartLayout.areas.xAxis.y1}
+									// TODO pass tickLength from styling
+									y2={chartLayout.areas.xAxis.y1 + styling.xTickValuesLength}
+									stroke={styling.xTickValuesColor}
+									strokeWidth={styling.xTickValuesWidth}
+								/>
+							</g>
+						);
+					})}
+
+					{xTickValuesMonthCentroids.map((it, i) => {
 						return (
 							<g key={i}>
 								<text
@@ -169,10 +227,10 @@ export function LineChartBody({
 									alignmentBaseline="baseline"
 									fill={styling.xLabelsColor}
 									fontSize={styling.xTickValuesFontSize}
-									x={xScale(it.index)}
+									x={it}
 									y={chartLayout.areas.xAxis.y2}
 								>
-									{it.label}
+									{monthStrings[i]}
 								</text>
 							</g>
 						);
@@ -201,4 +259,94 @@ export function LineChartBody({
 			</div>
 		</div>
 	);
+}
+
+function getAllButLast(arr: any[]): any[] {
+	if (arr.length <= 1) {
+		return [];
+	}
+
+	return arr.slice(0, arr.length - 1);
+}
+function getMonthString(
+	date: Date,
+	format: 'long' | 'short' | 'veryShort' = 'long'
+): string {
+	const months = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December',
+	];
+
+	const shortMonths = months.map((month) => month.slice(0, 3));
+	const veryShortMonths = months.map((month) => month.slice(0, 1));
+
+	switch (format) {
+		case 'long':
+			return months[date.getMonth()];
+		case 'short':
+			return shortMonths[date.getMonth()];
+		case 'veryShort':
+			return veryShortMonths[date.getMonth()];
+		default:
+			return months[date.getMonth()];
+	}
+}
+
+function generateMonthBoundariesDates(minDate: Date, maxDate: Date): Date[] {
+	const result: Date[] = [];
+
+	// Function to check if a date is the first day of the month
+	const isFirstDayOfMonth = (date: Date) => date.getDate() === 1;
+
+	// Function to get the last day of the month
+	const getLastDayOfMonth = (date: Date) =>
+		new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+	// Handle the minDate
+	if (!isFirstDayOfMonth(minDate)) {
+		result.push(new Date(minDate.getFullYear(), minDate.getMonth(), 1));
+	} else {
+		result.push(minDate);
+	}
+
+	// Generate the first day of each month between minDate and maxDate
+	let currentDate = new Date(minDate);
+	while (currentDate < maxDate) {
+		currentDate = new Date(
+			currentDate.getFullYear(),
+			currentDate.getMonth() + 1,
+			1
+		);
+		if (currentDate <= maxDate) {
+			result.push(currentDate);
+		}
+	}
+
+	// Handle the maxDate as an exception
+	if (maxDate <= getLastDayOfMonth(maxDate)) {
+		result.push(getLastDayOfMonth(maxDate));
+	}
+
+	return result;
+}
+
+function calculateAveragesBetweenNumbers(numbers: number[]): number[] {
+	const result: number[] = [];
+
+	for (let i = 0; i < numbers.length - 1; i++) {
+		const average = (numbers[i] + numbers[i + 1]) / 2;
+		result.push(average);
+	}
+
+	return result;
 }

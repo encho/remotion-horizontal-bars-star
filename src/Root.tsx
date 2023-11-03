@@ -14,11 +14,50 @@ import {
 	simpleLineChartSchema,
 } from './SimpleLineChart/SimpleLineChart';
 
+import {nerdyFinancePriceChartData} from './SimpleLineChart/mockData';
+
 import './style.css';
 
 const squareVideo = {
 	width: 1080,
 	height: 1080,
+};
+
+type NerdyFinancePriceChartsArgs = {
+	ticker: string;
+	endDate: string;
+	timePeriod: '1Y' | '2Y';
+};
+
+const fetchNerdyFinancePriceCharts = async ({
+	ticker,
+	endDate,
+	timePeriod,
+}: NerdyFinancePriceChartsArgs) => {
+	const nerdyFinanceQuantApiBase = 'http://127.0.0.1:5000';
+	// const ticker = 'BTC-USD';
+	// const endDate = '2023-10-31T15:36:06.837Z';
+	// const timePeriod = '1Y';
+
+	const apiUrl = `${nerdyFinanceQuantApiBase}/flics/simple-price-chart?ticker=${ticker}&&endDate=${endDate}&timePeriod=${timePeriod}`;
+
+	const data = await fetch(apiUrl);
+
+	const json = await data.json();
+
+	// TODO validate a specific return type
+	// maybe with zod it is possible?
+	// TODO parse within the component!
+	const parsedData = json.data.map((it: {value: number; index: string}) => ({
+		value: it.value,
+		index: new Date(it.index),
+	}));
+
+	return {
+		data: parsedData,
+		title: json.title,
+		subtitle: json.subtitle,
+	};
 };
 
 export const RemotionRoot: React.FC = () => {
@@ -35,25 +74,11 @@ export const RemotionRoot: React.FC = () => {
 				{...squareVideo}
 				schema={simpleLineChartSchema}
 				defaultProps={{
-					title: 'S&P500 Performance',
-					subtitle: 'Prices in USD',
-					// data: [
-					// 	{index: 0, value: 10, label: 'J'},
-					// 	{index: 1, value: 30, label: 'F'},
-					// 	{index: 2, value: 20, label: 'M'},
-					// 	{index: 3, value: 20, label: 'A'},
-					// 	{index: 4, value: 18, label: 'M'},
-					// 	{index: 5, value: 25, label: 'J'},
-					// 	{index: 6, value: 15, label: 'J'},
-					// 	{index: 7, value: 28, label: 'A'},
-					// 	{index: 8, value: 32, label: 'S'},
-					// 	{index: 9, value: 37, label: 'O'},
-					// 	{index: 10, value: 32, label: 'N'},
-					// 	{index: 11, value: 29, label: 'D'},
-					// ],
-					data: null,
+					title: nerdyFinancePriceChartData.title,
+					subtitle: nerdyFinancePriceChartData.subtitle,
+					data: nerdyFinancePriceChartData.data,
 					styling: {
-						titleFontSize: 100,
+						titleFontSize: 75,
 						subTitleFontSize: 40,
 						backgroundColor: '#FFFDD0',
 						titleColor: '#6F5B3E',
@@ -61,7 +86,7 @@ export const RemotionRoot: React.FC = () => {
 						yLabelsColor: '#C4AE78',
 						xLabelsColor: '#C4AE78',
 						lineColor: '#00c278',
-						yAxisAreaWidth: 60,
+						yAxisAreaWidth: 128,
 						lineStrokeWidth: 10,
 						lineCircleRadius: 16,
 						yTickValuesFontSize: 40,
@@ -69,39 +94,71 @@ export const RemotionRoot: React.FC = () => {
 						xAxisAreaHeight: 60,
 						gridLinesStrokeWidth: 3,
 						yAxisAreaMarginLeft: 20,
+						xTickValuesLength: 15,
+						xTickValuesWidth: 2,
+						xTickValuesColor: '#ede0c0',
+					},
+					showLineChartLayout: false,
+				}}
+			/>
+
+			<Composition
+				// You can take the "id" to render a video:
+				// npx remotion render src/index.ts <id> out/video.mp4
+				id="NerdyFinancePriceChart"
+				component={SimpleLineChart}
+				durationInFrames={240}
+				// 	(INPUT_PROPS?.durationSecs ?? DEFAULT_DURATION_SECONDS) *
+				fps={30}
+				{...squareVideo}
+				schema={simpleLineChartSchema}
+				defaultProps={{
+					title: 'S&P500 Performance',
+					subtitle: 'Prices in USD',
+					data: null,
+					styling: {
+						titleFontSize: 75,
+						subTitleFontSize: 40,
+						backgroundColor: '#FFFDD0',
+						titleColor: '#6F5B3E',
+						gridLinesColor: '#ede0c0',
+						yLabelsColor: '#C4AE78',
+						xLabelsColor: '#C4AE78',
+						lineColor: '#00c278',
+						yAxisAreaWidth: 128,
+						lineStrokeWidth: 10,
+						lineCircleRadius: 16,
+						yTickValuesFontSize: 40,
+						xTickValuesFontSize: 40,
+						xAxisAreaHeight: 60,
+						gridLinesStrokeWidth: 3,
+						yAxisAreaMarginLeft: 20,
+						xTickValuesLength: 15,
+						xTickValuesWidth: 2,
+						xTickValuesColor: '#ede0c0',
 					},
 					showLineChartLayout: false,
 				}}
 				calculateMetadata={async ({props}) => {
-					// const apiUrl =
-					// 	'http://127.0.0.1:5000/flics/simple-price-chart?ticker=AAA';
+					const ticker = 'BTC-USD';
+					const endDate = '2023-10-31T15:36:06.837Z';
+					const timePeriod = '1Y';
 
-					const apiUrl =
-						'http://127.0.0.1:5000/flics/simple-price-chart?ticker=BTC-USD&&endDate=2023-10-31T15:36:06.837Z&timePeriod=1Y';
+					const res = await fetchNerdyFinancePriceCharts({
+						ticker,
+						endDate,
+						timePeriod,
+					});
 
-					const data = await fetch(apiUrl);
-					const json = await data.json();
-
-					console.log(json.data);
 					return {
 						props: {
 							...props,
-							data: json.data,
-							title: json.title,
-							subtitle: json.subtitle,
+							data: res.data,
+							title: res.title,
+							subtitle: res.subtitle,
 						},
 					};
 				}}
-				// calculateMetadata={async ({props}) => {
-				// 	const apiUrl = `https://api.openligadb.de/getbltable/bl1/${2023}`;
-				// 	const data = await fetch(apiUrl);
-				// 	return props;
-				// }}
-				// calculateMetadata={async ({props}) => {
-				// 	const result = await yahooFinance.quoteSummary('AAPL');
-				// 	console.log(result);
-				// 	return {...props};
-				// }}
 			/>
 
 			<Composition

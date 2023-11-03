@@ -1062,6 +1062,7 @@ export const RemotionRoot: React.FC = () => {
 						xTickValuesColor: '#ede0c0',
 					},
 					showLineChartLayout: false,
+					watermark: true,
 				}}
 			/>
 

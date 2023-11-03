@@ -2,7 +2,7 @@ import {evolvePath, getLength, getPointAtLength} from '@remotion/paths';
 import {max, min} from 'd3-array';
 import {scaleLinear, scaleTime} from 'd3-scale';
 import {line} from 'd3-shape';
-import {useCurrentFrame, useVideoConfig} from 'remotion';
+import {useCurrentFrame, useVideoConfig, spring} from 'remotion';
 
 import {FontFamiliesUnionType} from '../fontSpecs';
 import {
@@ -48,7 +48,16 @@ export function LineChartBody({
 	};
 }) {
 	const frame = useCurrentFrame();
-	const {durationInFrames} = useVideoConfig();
+	const {durationInFrames, fps} = useVideoConfig();
+
+	const spr = spring({
+		fps,
+		frame,
+		config: {damping: 300},
+		durationInFrames: durationInFrames / 2,
+	});
+
+	const percentageAnimation = spr;
 
 	const chartRowsRailSpec: TGridRailSpec = [
 		{type: 'fr', value: 1, name: 'plot'},
@@ -130,7 +139,6 @@ export function LineChartBody({
 	const d = linePath(data) || '';
 	const pathLength = d ? getLength(d) : 0;
 	// const percentageAnimation = Math.min(frame / (durationInFrames / 2), 1);
-	const percentageAnimation = Math.min(0.25 + frame / durationInFrames, 1);
 	const pointAtLength = getPointAtLength(d, percentageAnimation * pathLength);
 	const evolvedPath = evolvePath(percentageAnimation, d);
 	const tickValues = yScale.nice().ticks(5);

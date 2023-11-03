@@ -14,6 +14,7 @@ import {useRef, useEffect, useState} from 'react';
 // TODO
 // implement this design: https://polygon.io/blog/universal-snapshot
 // import {Watermark} from '../GenericTools/Watermark';
+import {FooterLogo} from './FooterLogo';
 import {SlideIn} from '../SlideIn';
 import {SlideTitleSequence} from '../slides/SlideTitleSequence';
 import {LineChartBody} from './LineChartBody';
@@ -27,7 +28,7 @@ export const simpleLineChartSchema = z.object({
 	fontFamilySubtitle: z.enum(fontFamilies),
 	fontFamilyXTicklabels: z.enum(fontFamilies),
 	fontFamilyYTicklabels: z.enum(fontFamilies),
-	watermark: z.optional(z.boolean()),
+	watermark: z.boolean().optional(),
 	showLineChartLayout: z.optional(z.boolean()),
 	styling: z.object({
 		backgroundColor: zColor(),
@@ -68,6 +69,7 @@ export const SimpleLineChart: React.FC<
 	subtitle,
 	showZero,
 	styling,
+	watermark,
 	showLineChartLayout,
 	fontFamilyTitle,
 	fontFamilySubtitle,
@@ -110,7 +112,7 @@ export const SimpleLineChart: React.FC<
 	return (
 		<AbsoluteFill style={{backgroundColor: styling.backgroundColor}}>
 			<div className="flex flex-col h-full p-12">
-				<div className="pb-16">
+				<div className="pb-12">
 					<Sequence from={0} durationInFrames={durationInFrames} layout="none">
 						<SlideTitleSequence
 							title={title}
@@ -158,6 +160,15 @@ export const SimpleLineChart: React.FC<
 						</SlideIn>
 					</Sequence>
 				</div>
+				{/* <div className="bg-orange-300"> */}
+				{/* // TODO rename to footerLogoImgSrc or so */}
+				{watermark ? (
+					// <h1 className="text-[140px]">FOOTERIMAGE</h1>
+					<FooterLogo />
+				) : (
+					<div></div>
+				)}
+				{/* </div> */}
 			</div>
 
 			{/* <Watermark watermark={watermark} baselines={baselines} /> */}

@@ -13,6 +13,9 @@ import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 // toggle screen size?
 // api: return the correct title and subtitle
 // api: deploy
+// animate logo
+// logo becomes action card
+// add tooltip which becomes flag
 // update env flags to use deployed apis too
 // nice to have: automatically determine necessary space for y axis
 
@@ -118,8 +121,10 @@ export const NerdyPriceChart: React.FC<
 	}, [ticker, timePeriod, endDate, nerdyFinanceEnv]);
 
 	const defaultStyling = {
-		titleFontSize: 75,
-		subTitleFontSize: 40,
+		// titleFontSize: 75,
+		// subTitleFontSize: 40,
+		titleFontSize: 50,
+		subTitleFontSize: 50,
 		backgroundColor: theme.background,
 		titleColor: theme.title,
 		gridLinesColor: theme.gridLines,
@@ -155,6 +160,7 @@ export const NerdyPriceChart: React.FC<
 					data={apiResult.data}
 					styling={mergedStyling}
 					showLineChartLayout={false}
+					watermark={true}
 				/>
 			) : null}
 		</AbsoluteFill>

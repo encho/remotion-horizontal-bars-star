@@ -45,6 +45,8 @@ export const RemotionRoot: React.FC = () => {
 					ticker: 'JPM',
 					timePeriod: 'YTD' as const,
 					nerdyFinanceEnv: 'DEV' as const,
+					styling: {yAxisAreaWidth: 60},
+					title: 'JPMorgan Preformance',
 				}}
 			/>
 

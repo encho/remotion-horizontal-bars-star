@@ -5,13 +5,13 @@ import {useEffect, useState} from 'react';
 import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 
 // TODOS
-// optional styling for this via 'styling' props, to be merded with defaults
+// load correct nerdy fonts
 // theme 'DARK' | 'BRIGHT' enum prop
 // add logo of nerdy at the bottom
-// load correct nerdy fonts
 // improve x axis to account for series length flexibly
 // nice to have: automatically determine necessary space for y axis
 // api: return the correct title and subtitle
+// plot from 0 or from min-max bounds (y axis)
 
 export const nerdyPriceChartSchema = z.object({
 	title: z.optional(z.string()),
@@ -19,6 +19,11 @@ export const nerdyPriceChartSchema = z.object({
 	ticker: z.string(),
 	timePeriod: z.enum(['1M', '3M', '1Y', '2Y', 'YTD', 'QTD']),
 	nerdyFinanceEnv: z.enum(['DEV', 'STAGE', 'PROD']),
+	styling: z
+		.object({
+			yAxisAreaWidth: z.number().optional(),
+		})
+		.optional(),
 });
 
 type TNerdyPriceChartApiResult = {
@@ -29,7 +34,7 @@ type TNerdyPriceChartApiResult = {
 
 export const NerdyPriceChart: React.FC<
 	z.infer<typeof nerdyPriceChartSchema>
-> = ({title, subtitle, ticker, timePeriod, nerdyFinanceEnv}) => {
+> = ({title, subtitle, ticker, timePeriod, nerdyFinanceEnv, styling = {}}) => {
 	// TODO from props
 	const endDate = '2023-10-31T15:36:06.837Z';
 	// const timePeriod = '1M';
@@ -59,6 +64,30 @@ export const NerdyPriceChart: React.FC<
 		fetchAndSetData();
 	}, [ticker, timePeriod, endDate, nerdyFinanceEnv]);
 
+	const defaultStyling = {
+		titleFontSize: 75,
+		subTitleFontSize: 40,
+		backgroundColor: '#FFFDD0',
+		titleColor: '#6F5B3E',
+		gridLinesColor: '#ede0c0',
+		yLabelsColor: '#C4AE78',
+		xLabelsColor: '#C4AE78',
+		lineColor: '#00c278',
+		yAxisAreaWidth: 128,
+		lineStrokeWidth: 10,
+		lineCircleRadius: 16,
+		yTickValuesFontSize: 40,
+		xTickValuesFontSize: 40,
+		xAxisAreaHeight: 60,
+		gridLinesStrokeWidth: 3,
+		yAxisAreaMarginLeft: 20,
+		xTickValuesLength: 15,
+		xTickValuesWidth: 2,
+		xTickValuesColor: '#ede0c0',
+	};
+
+	const mergedStyling = {...defaultStyling, ...styling};
+
 	return (
 		<AbsoluteFill>
 			{apiResult ? (
@@ -66,27 +95,7 @@ export const NerdyPriceChart: React.FC<
 					title={title || apiResult.title}
 					subtitle={subtitle || apiResult.subtitle}
 					data={apiResult.data}
-					styling={{
-						titleFontSize: 75,
-						subTitleFontSize: 40,
-						backgroundColor: '#FFFDD0',
-						titleColor: '#6F5B3E',
-						gridLinesColor: '#ede0c0',
-						yLabelsColor: '#C4AE78',
-						xLabelsColor: '#C4AE78',
-						lineColor: '#00c278',
-						yAxisAreaWidth: 128,
-						lineStrokeWidth: 10,
-						lineCircleRadius: 16,
-						yTickValuesFontSize: 40,
-						xTickValuesFontSize: 40,
-						xAxisAreaHeight: 60,
-						gridLinesStrokeWidth: 3,
-						yAxisAreaMarginLeft: 20,
-						xTickValuesLength: 15,
-						xTickValuesWidth: 2,
-						xTickValuesColor: '#ede0c0',
-					}}
+					styling={mergedStyling}
 					showLineChartLayout={false}
 				/>
 			) : null}

@@ -19,11 +19,13 @@ export function LineChartBody({
 	fontFamilyYTicklabels,
 	data,
 	styling,
+	showZero,
 	showLayout = false,
 }: {
 	areaWidth: number;
 	areaHeight: number;
 	data: {index: Date; value: number}[];
+	showZero: boolean;
 	showLayout?: boolean;
 	fontFamilyYTicklabels: FontFamiliesUnionType;
 	fontFamilyXTicklabels: FontFamiliesUnionType;
@@ -102,10 +104,23 @@ export function LineChartBody({
 		])
 		.range([chartLayout.areas.plot.x1, chartLayout.areas.plot.x2]);
 
-	const yScale = scaleLinear()
-		.domain([max(data.map((it) => it.value)) as number, 0])
-		.range([chartLayout.areas.plot.y1, chartLayout.areas.plot.y2]);
+	// TODO if we ensure that array is not empty we would not have to perform the casting
+	const yDomainMin = min(data, (it) => it.value) as number;
+	const yDomainMax = max(data, (it) => it.value) as number;
+	const yDomainDiff = yDomainMax - yDomainMin;
+	// TODO padding conditional on input flag
+	const yPadding = yDomainDiff * 0.1;
+	const yDomainBounded = [yDomainMax + yPadding, yDomainMin - yPadding];
 
+	const yDomainZero = [yDomainMax, 0];
+
+	const yDomain = showZero ? yDomainZero : yDomainBounded;
+
+	const yScale = scaleLinear()
+		.domain(yDomain)
+		// .domain([max(data.map((it) => it.value)) as number, 0])
+		.range([chartLayout.areas.plot.y1, chartLayout.areas.plot.y2]);
+	// .nice();
 	const linePath = line<{index: Date; value: number}>()
 		.x((d) => xScale(d.index))
 		.y((d) => yScale(d.value));

@@ -42,8 +42,9 @@ export const RemotionRoot: React.FC = () => {
 				{...squareVideo}
 				schema={nerdyPriceChartSchema}
 				defaultProps={{
-					ticker: 'BTC-USD' as const,
-					timePeriod: '1Y' as const,
+					ticker: 'SPX_INDEX' as const,
+					timePeriod: '2Y' as const,
+					showZero: false,
 					nerdyFinanceEnv: 'DEV' as const,
 					styling: {yAxisAreaWidth: 129},
 				}}
@@ -62,10 +63,11 @@ export const RemotionRoot: React.FC = () => {
 				defaultProps={{
 					title: 'BTC-USD Performance',
 					subtitle: 'Prices in USD',
-					fontFamilyTitle: 'Inter-Medium' as const,
-					fontFamilySubtitle: 'Inter-Regular' as const,
-					fontFamilyXTicklabels: 'Inter-Medium' as const,
-					fontFamilyYTicklabels: 'Inter-Medium' as const,
+					showZero: false,
+					fontFamilyTitle: 'SourceSerifPro-Bold' as const,
+					fontFamilySubtitle: 'SourceSerifPro-Regular' as const,
+					fontFamilyXTicklabels: 'Inter-Regular' as const,
+					fontFamilyYTicklabels: 'Inter-Regular' as const,
 					data: [
 						{
 							index: new Date('2022-12-31T23:00:00.000Z'),

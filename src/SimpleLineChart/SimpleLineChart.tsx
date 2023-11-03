@@ -22,18 +22,11 @@ import {fontFamilies} from '../fontSpecs';
 export const simpleLineChartSchema = z.object({
 	title: z.string(),
 	subtitle: z.string(),
+	showZero: z.boolean(),
 	fontFamilyTitle: z.enum(fontFamilies),
 	fontFamilySubtitle: z.enum(fontFamilies),
 	fontFamilyXTicklabels: z.enum(fontFamilies),
 	fontFamilyYTicklabels: z.enum(fontFamilies),
-	data: z
-		.array(
-			z.object({
-				index: z.date(),
-				value: z.number(),
-			})
-		)
-		.nullable(),
 	watermark: z.optional(z.boolean()),
 	showLineChartLayout: z.optional(z.boolean()),
 	styling: z.object({
@@ -43,7 +36,6 @@ export const simpleLineChartSchema = z.object({
 		yLabelsColor: zColor(),
 		xLabelsColor: zColor(),
 		lineColor: zColor(),
-		//
 		titleFontSize: z.number(),
 		subTitleFontSize: z.number(),
 		yAxisAreaWidth: z.number(),
@@ -58,6 +50,14 @@ export const simpleLineChartSchema = z.object({
 		xTickValuesWidth: z.number(),
 		xTickValuesColor: zColor(),
 	}),
+	data: z
+		.array(
+			z.object({
+				index: z.date(),
+				value: z.number(),
+			})
+		)
+		.nullable(),
 });
 
 export const SimpleLineChart: React.FC<
@@ -66,6 +66,7 @@ export const SimpleLineChart: React.FC<
 	data,
 	title,
 	subtitle,
+	showZero,
 	styling,
 	showLineChartLayout,
 	fontFamilyTitle,
@@ -132,6 +133,7 @@ export const SimpleLineChart: React.FC<
 								areaWidth={chartElementWidth}
 								areaHeight={chartElementHeight}
 								data={data}
+								showZero={showZero}
 								showLayout={showLineChartLayout}
 								fontFamilyYTicklabels={fontFamilyYTicklabels}
 								fontFamilyXTicklabels={fontFamilyXTicklabels}

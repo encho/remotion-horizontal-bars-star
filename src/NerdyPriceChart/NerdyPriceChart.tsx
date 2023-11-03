@@ -9,8 +9,8 @@ import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 
 // TODOS
 // add logo of nerdy at the bottom
-// plot from 0 or from min-max bounds (y axis)
 // improve x axis to account for series length flexibly
+// toggle screen size?
 // nice to have: automatically determine necessary space for y axis
 // api: return the correct title and subtitle
 
@@ -58,6 +58,7 @@ export const nerdyPriceChartSchema = z.object({
 	]),
 	title: z.optional(z.string()),
 	subtitle: z.optional(z.string()),
+	showZero: z.boolean(),
 	timePeriod: z.enum(['1M', '3M', '1Y', '2Y', 'YTD', 'QTD']),
 	nerdyFinanceEnv: z.enum(['DEV', 'STAGE', 'PROD']),
 	styling: z
@@ -75,7 +76,15 @@ type TNerdyPriceChartApiResult = {
 
 export const NerdyPriceChart: React.FC<
 	z.infer<typeof nerdyPriceChartSchema>
-> = ({title, subtitle, ticker, timePeriod, nerdyFinanceEnv, styling = {}}) => {
+> = ({
+	title,
+	subtitle,
+	ticker,
+	showZero,
+	timePeriod,
+	nerdyFinanceEnv,
+	styling = {},
+}) => {
 	// TODO from props
 	const endDate = '2023-10-31T15:36:06.837Z';
 
@@ -140,6 +149,7 @@ export const NerdyPriceChart: React.FC<
 					fontFamilyYTicklabels="Inter-Regular"
 					title={title || apiResult.title}
 					subtitle={subtitle || apiResult.subtitle}
+					showZero={showZero}
 					data={apiResult.data}
 					styling={mergedStyling}
 					showLineChartLayout={false}

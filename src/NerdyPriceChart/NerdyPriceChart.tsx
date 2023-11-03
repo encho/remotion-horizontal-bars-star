@@ -6,17 +6,56 @@ import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 
 // TODOS
 // load correct nerdy fonts
-// theme 'DARK' | 'BRIGHT' enum prop
 // add logo of nerdy at the bottom
 // improve x axis to account for series length flexibly
 // nice to have: automatically determine necessary space for y axis
 // api: return the correct title and subtitle
 // plot from 0 or from min-max bounds (y axis)
 
+const nerdyThemeDark = {
+	background: '#000000',
+	title: '#ffffff',
+	text: '#ffffff',
+	softText: '#666666',
+	green: '#00FED8',
+	magenta: '#FE0097',
+	gridLines: '#444444',
+	line: '#00FED8',
+	xTicks: '#444444',
+};
+
 export const nerdyPriceChartSchema = z.object({
+	ticker: z.enum([
+		'BTC-USD',
+		'XAU-USD',
+		'ETH-USD',
+		'XRP-USD',
+		'USDT-USD',
+		'BNB-USD',
+		'ADA-USD',
+		'GBP-USD',
+		'EUR-USD',
+		'JPY-USD',
+		'AUD-USD',
+		'NZD-USD',
+		'EUR-CHF',
+		'USD-RUB',
+		'FTSE_INDEX',
+		'DAX_INDEX',
+		'^N100',
+		'SPX_INDEX',
+		'DJI_INDEX',
+		'NIKKEI_INDEX',
+		'AAPL',
+		'AMZN',
+		'COIN',
+		'PFE',
+		'GS',
+		'JPM',
+		'TESLA',
+	]),
 	title: z.optional(z.string()),
 	subtitle: z.optional(z.string()),
-	ticker: z.string(),
 	timePeriod: z.enum(['1M', '3M', '1Y', '2Y', 'YTD', 'QTD']),
 	nerdyFinanceEnv: z.enum(['DEV', 'STAGE', 'PROD']),
 	styling: z
@@ -43,6 +82,8 @@ export const NerdyPriceChart: React.FC<
 		null
 	);
 
+	const theme = nerdyThemeDark;
+
 	useEffect(() => {
 		const handle = delayRender('FETCH_API_DATA');
 		async function fetchAndSetData() {
@@ -67,12 +108,13 @@ export const NerdyPriceChart: React.FC<
 	const defaultStyling = {
 		titleFontSize: 75,
 		subTitleFontSize: 40,
-		backgroundColor: '#FFFDD0',
-		titleColor: '#6F5B3E',
-		gridLinesColor: '#ede0c0',
-		yLabelsColor: '#C4AE78',
-		xLabelsColor: '#C4AE78',
-		lineColor: '#00c278',
+		backgroundColor: theme.background,
+		titleColor: theme.title,
+		gridLinesColor: theme.gridLines,
+		yLabelsColor: theme.softText,
+		xLabelsColor: theme.softText,
+		xTickValuesColor: theme.xTicks,
+		lineColor: theme.line,
 		yAxisAreaWidth: 128,
 		lineStrokeWidth: 10,
 		lineCircleRadius: 16,
@@ -83,7 +125,6 @@ export const NerdyPriceChart: React.FC<
 		yAxisAreaMarginLeft: 20,
 		xTickValuesLength: 15,
 		xTickValuesWidth: 2,
-		xTickValuesColor: '#ede0c0',
 	};
 
 	const mergedStyling = {...defaultStyling, ...styling};

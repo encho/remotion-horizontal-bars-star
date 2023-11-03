@@ -42,11 +42,12 @@ export const RemotionRoot: React.FC = () => {
 				{...squareVideo}
 				schema={nerdyPriceChartSchema}
 				defaultProps={{
-					ticker: 'JPM',
-					timePeriod: 'YTD' as const,
+					ticker: 'BTC-USD' as const,
+					timePeriod: '2Y' as const,
 					nerdyFinanceEnv: 'DEV' as const,
-					styling: {yAxisAreaWidth: 60},
-					title: 'JPMorgan Preformance',
+					styling: {yAxisAreaWidth: 129},
+					title: 'Bitcoin Performance',
+					subtitle: 'Prices in USD | Last 2 Years',
 				}}
 			/>
 

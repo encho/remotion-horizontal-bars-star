@@ -28,7 +28,6 @@ export const simpleLineChartSchema = z.object({
 			z.object({
 				index: z.date(),
 				value: z.number(),
-				// label: z.string(),
 			})
 		)
 		.nullable(),

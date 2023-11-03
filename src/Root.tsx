@@ -42,19 +42,9 @@ export const RemotionRoot: React.FC = () => {
 				{...squareVideo}
 				schema={nerdyPriceChartSchema}
 				defaultProps={{
-					// ticker: 'BTC-USD',
 					ticker: 'JPM',
-					timePeriod: 'YTD',
-					// TODO
-					// styling?: {
-					// 	titleFontSize?: maybe override,
-					// 	subtitleFontSize?: maybeOverride,
-					// 	yAxisAreaWidth?: maybewOverride
-					// }
-					// This is a 'setting' that we use across nerdy finance charts
-					nerdyFinanceEnv: 'DEV',
-					// This is a 'setting' that we use across nerdy finance charts
-					// theme: 'DARK',
+					timePeriod: 'YTD' as const,
+					nerdyFinanceEnv: 'DEV' as const,
 				}}
 			/>
 

@@ -11,8 +11,11 @@ import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 // load correct nerdy fonts
 // improve x axis to account for series length flexibly
 // nice to have: automatically determine necessary space for y axis
+// api: return the correct title and subtitle
 
 export const nerdyPriceChartSchema = z.object({
+	title: z.optional(z.string()),
+	subtitle: z.optional(z.string()),
 	ticker: z.string(),
 	timePeriod: z.enum(['1M', '3M', '1Y', '2Y', 'YTD', 'QTD']),
 	nerdyFinanceEnv: z.enum(['DEV', 'STAGE', 'PROD']),
@@ -26,7 +29,7 @@ type TNerdyPriceChartApiResult = {
 
 export const NerdyPriceChart: React.FC<
 	z.infer<typeof nerdyPriceChartSchema>
-> = ({ticker, timePeriod, nerdyFinanceEnv}) => {
+> = ({title, subtitle, ticker, timePeriod, nerdyFinanceEnv}) => {
 	// TODO from props
 	const endDate = '2023-10-31T15:36:06.837Z';
 	// const timePeriod = '1M';
@@ -60,8 +63,8 @@ export const NerdyPriceChart: React.FC<
 		<AbsoluteFill>
 			{apiResult ? (
 				<SimpleLineChart
-					title={apiResult.title}
-					subtitle={apiResult.subtitle}
+					title={title || apiResult.title}
+					subtitle={subtitle || apiResult.subtitle}
 					data={apiResult.data}
 					styling={{
 						titleFontSize: 75,

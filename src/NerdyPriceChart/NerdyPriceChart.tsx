@@ -11,8 +11,10 @@ import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 // add logo of nerdy at the bottom
 // improve x axis to account for series length flexibly
 // toggle screen size?
-// nice to have: automatically determine necessary space for y axis
 // api: return the correct title and subtitle
+// api: deploy
+// update env flags to use deployed apis too
+// nice to have: automatically determine necessary space for y axis
 
 const nerdyThemeDark = {
 	background: '#000000',

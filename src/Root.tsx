@@ -14,6 +14,11 @@ import {
 	simpleLineChartSchema,
 } from './SimpleLineChart/SimpleLineChart';
 
+import {
+	NerdyPriceChart,
+	nerdyPriceChartSchema,
+} from './NerdyPriceChart/NerdyPriceChart';
+
 import {nerdyFinancePriceChartData} from './SimpleLineChart/mockData';
 
 import './style.css';
@@ -63,6 +68,21 @@ const fetchNerdyFinancePriceCharts = async ({
 export const RemotionRoot: React.FC = () => {
 	return (
 		<>
+			<Composition
+				// You can take the "id" to render a video:
+				// npx remotion render src/index.ts <id> out/video.mp4
+				id="NerdyPriceChart"
+				component={NerdyPriceChart}
+				durationInFrames={240}
+				// 	(INPUT_PROPS?.durationSecs ?? DEFAULT_DURATION_SECONDS) *
+				fps={30}
+				{...squareVideo}
+				schema={nerdyPriceChartSchema}
+				defaultProps={{
+					ticker: 'BTC-USD',
+				}}
+			/>
+
 			<Composition
 				// You can take the "id" to render a video:
 				// npx remotion render src/index.ts <id> out/video.mp4

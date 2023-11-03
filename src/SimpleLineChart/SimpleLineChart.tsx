@@ -24,6 +24,8 @@ export const simpleLineChartSchema = z.object({
 	subtitle: z.string(),
 	fontFamilyTitle: z.enum(fontFamilies),
 	fontFamilySubtitle: z.enum(fontFamilies),
+	fontFamilyXTicklabels: z.enum(fontFamilies),
+	fontFamilyYTicklabels: z.enum(fontFamilies),
 	data: z
 		.array(
 			z.object({
@@ -68,6 +70,8 @@ export const SimpleLineChart: React.FC<
 	showLineChartLayout,
 	fontFamilyTitle,
 	fontFamilySubtitle,
+	fontFamilyXTicklabels,
+	fontFamilyYTicklabels,
 }) => {
 	// TODO use tiny-invariant
 	if (data === null) {
@@ -129,6 +133,8 @@ export const SimpleLineChart: React.FC<
 								areaHeight={chartElementHeight}
 								data={data}
 								showLayout={showLineChartLayout}
+								fontFamilyYTicklabels={fontFamilyYTicklabels}
+								fontFamilyXTicklabels={fontFamilyXTicklabels}
 								styling={{
 									gridLinesColor: styling.gridLinesColor,
 									yLabelsColor: styling.yLabelsColor,

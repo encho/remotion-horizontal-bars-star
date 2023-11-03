@@ -4,6 +4,7 @@ import {scaleLinear, scaleTime} from 'd3-scale';
 import {line} from 'd3-shape';
 import {useCurrentFrame, useVideoConfig} from 'remotion';
 
+import {FontFamiliesUnionType} from '../fontSpecs';
 import {
 	DisplayGridLayout,
 	TGridLayoutAreaSpec,
@@ -14,7 +15,8 @@ import {
 export function LineChartBody({
 	areaWidth,
 	areaHeight,
-	// data: unparsedData,
+	fontFamilyXTicklabels,
+	fontFamilyYTicklabels,
 	data,
 	styling,
 	showLayout = false,
@@ -23,6 +25,8 @@ export function LineChartBody({
 	areaHeight: number;
 	data: {index: Date; value: number}[];
 	showLayout?: boolean;
+	fontFamilyYTicklabels: FontFamiliesUnionType;
+	fontFamilyXTicklabels: FontFamiliesUnionType;
 	styling: {
 		gridLinesColor: string;
 		yLabelsColor: string;
@@ -87,23 +91,6 @@ export function LineChartBody({
 		height: areaHeight,
 		gridLayoutSpec: chartGridLayoutSpec,
 	});
-
-	// const xScale = scaleLinear()
-	// 	.domain([
-	// 		min(data.map((it) => it.index)) as number,
-	// 		max(data.map((it) => it.index)) as number,
-	// 	])
-	// 	.range([chartLayout.areas.plot.x1, chartLayout.areas.plot.x2]);
-
-	// const parseData = (d: {index: string; value: number}[]) => {
-	// 	console.log('parsing...');
-	// 	return d.map((it: {index: string; value: number}) => ({
-	// 		value: it.value,
-	// 		index: new Date(it.index) as Date,
-	// 	}));
-	// };
-
-	// const data = parseData(unparsedData);
 
 	const minDate = min(data.map((it) => it.index)) as Date;
 	const maxDate = max(data.map((it) => it.index)) as Date;
@@ -192,6 +179,7 @@ export function LineChartBody({
 								<text
 									x={chartLayout.areas.yAxis.x2}
 									y={yScale(tickValue)}
+									fontFamily={fontFamilyYTicklabels}
 									fontSize={styling.yTickValuesFontSize}
 									fill={styling.yLabelsColor}
 									textAnchor="end"
@@ -226,6 +214,7 @@ export function LineChartBody({
 									textAnchor="middle"
 									alignmentBaseline="baseline"
 									fill={styling.xLabelsColor}
+									fontFamily={fontFamilyXTicklabels}
 									fontSize={styling.xTickValuesFontSize}
 									x={it}
 									y={chartLayout.areas.xAxis.y2}

@@ -8,7 +8,6 @@ import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 // import {useFontsLoader} from '../useFontsLoader';
 
 // TODOS
-// load correct nerdy fonts
 // add logo of nerdy at the bottom
 // improve x axis to account for series length flexibly
 // nice to have: automatically determine necessary space for y axis
@@ -26,11 +25,6 @@ const nerdyThemeDark = {
 	line: '#00FED8',
 	xTicks: '#444444',
 };
-
-// const nerdyFontSpecs = [
-// 	// availableFontSpecs['NotoSansMono-Variable'],
-// 	// availableFontSpecs.SourceSerifPro.Light,
-// ];
 
 export const nerdyPriceChartSchema = z.object({
 	ticker: z.enum([
@@ -142,6 +136,8 @@ export const NerdyPriceChart: React.FC<
 				<SimpleLineChart
 					fontFamilyTitle="Inter-Bold"
 					fontFamilySubtitle="Inter-Regular"
+					fontFamilyXTicklabels="Inter-Regular"
+					fontFamilyYTicklabels="Inter-Regular"
 					title={title || apiResult.title}
 					subtitle={subtitle || apiResult.subtitle}
 					data={apiResult.data}

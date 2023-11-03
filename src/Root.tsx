@@ -66,6 +66,8 @@ export const RemotionRoot: React.FC = () => {
 					subtitle: 'Prices in USD',
 					fontFamilyTitle: 'Inter-Medium' as const,
 					fontFamilySubtitle: 'Inter-Regular' as const,
+					fontFamilyXTicklabels: 'Inter-Medium' as const,
+					fontFamilyYTicklabels: 'Inter-Medium' as const,
 					data: [
 						{
 							index: new Date('2022-12-31T23:00:00.000Z'),

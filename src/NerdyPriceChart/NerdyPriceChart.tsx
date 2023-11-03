@@ -9,10 +9,10 @@ import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 
 // TODOS
 // add logo of nerdy at the bottom
+// plot from 0 or from min-max bounds (y axis)
 // improve x axis to account for series length flexibly
 // nice to have: automatically determine necessary space for y axis
 // api: return the correct title and subtitle
-// plot from 0 or from min-max bounds (y axis)
 
 const nerdyThemeDark = {
 	background: '#000000',

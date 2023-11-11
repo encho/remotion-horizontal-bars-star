@@ -1,6 +1,7 @@
 import {AbsoluteFill, delayRender, continueRender} from 'remotion';
 import {z} from 'zod';
 import {useEffect, useState} from 'react';
+import {find} from 'lodash';
 
 import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 
@@ -8,16 +9,17 @@ import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 // import {useFontsLoader} from '../useFontsLoader';
 
 // TODOS
-// add logo of nerdy at the bottom
-// improve x axis to account for series length flexibly
-// toggle screen size?
-// api: return the correct title and subtitle
+// performance in title
 // api: deploy
+// update env flags to use deployed apis too
+// api: return the correct title and subtitle
 // animate logo
+// improve x axis to account for series length flexibly
 // logo becomes action card
 // add tooltip which becomes flag
-// update env flags to use deployed apis too
+// toggle screen size?
 // nice to have: automatically determine necessary space for y axis
+// add performance information (in title, like the image?)
 
 const nerdyThemeDark = {
 	background: '#000000',
@@ -26,7 +28,7 @@ const nerdyThemeDark = {
 	softText: '#666666',
 	green: '#00FED8',
 	magenta: '#FE0097',
-	gridLines: '#444444',
+	gridLines: '#222',
 	line: '#00FED8',
 	xTicks: '#444444',
 };
@@ -73,9 +75,28 @@ export const nerdyPriceChartSchema = z.object({
 		.optional(),
 });
 
+// ticker_metadata: {
+// 	ticker: "BTC-USD",
+// 	base: "BTC",
+// 	quote: "USD",
+// 	yahoo_ticker: "BTC-USD",
+// 	name: "Bitcoin/USD",
+// 	type: "CRYPTO",
+// 	version: 1
+// 	},
+
 type TNerdyPriceChartApiResult = {
 	title: string;
 	subtitle: string;
+	ticker: string;
+	tickerMetadata: {
+		ticker: string;
+		quote: string;
+		name: string;
+		type: string;
+	};
+	percentageChange: number;
+	timePeriod: string;
 	data: {value: number; index: Date}[];
 };
 
@@ -121,10 +142,8 @@ export const NerdyPriceChart: React.FC<
 	}, [ticker, timePeriod, endDate, nerdyFinanceEnv]);
 
 	const defaultStyling = {
-		// titleFontSize: 75,
-		// subTitleFontSize: 40,
 		titleFontSize: 50,
-		subTitleFontSize: 50,
+		subTitleFontSize: 40,
 		backgroundColor: theme.background,
 		titleColor: theme.title,
 		gridLinesColor: theme.gridLines,
@@ -146,23 +165,44 @@ export const NerdyPriceChart: React.FC<
 
 	const mergedStyling = {...defaultStyling, ...styling};
 
+	if (!apiResult) {
+		return <AbsoluteFill />;
+	}
+
+	const percentageString = (apiResult?.percentageChange * 100).toFixed(2) + '%';
+
+	// const timePeriodsUniverse = [
+	// 	{id: 'YTD', name: 'Year-to-date'},
+	// 	{id: 'QTD', name: 'Quarter-to-date'},
+	// 	{id: '1M', name: '1 Month'},
+	// 	{id: '3M', name: '3 Months'},
+	// 	{id: '6M', name: '6 Months'},
+	// 	{id: '1Y', name: '1 Year'},
+	// 	{id: '2Y', name: '2 Years'},
+	// 	{id: '3Y', name: '3 Years'},
+	// ];
+	// function getNameById(id: string): string | undefined {
+	// 	const foundTimePeriod = find(timePeriodsUniverse, {id});
+	// 	return foundTimePeriod ? foundTimePeriod.name : undefined;
+	// }
+	// const timePeriodString = getNameById(apiResult.timePeriod);
+
 	return (
 		<AbsoluteFill>
-			{apiResult ? (
-				<SimpleLineChart
-					fontFamilyTitle="Inter-Bold"
-					fontFamilySubtitle="Inter-Regular"
-					fontFamilyXTicklabels="Inter-Regular"
-					fontFamilyYTicklabels="Inter-Regular"
-					title={title || apiResult.title}
-					subtitle={subtitle || apiResult.subtitle}
-					showZero={showZero}
-					data={apiResult.data}
-					styling={mergedStyling}
-					showLineChartLayout={false}
-					watermark={true}
-				/>
-			) : null}
+			<SimpleLineChart
+				fontFamilyTitle="Inter-Bold"
+				fontFamilySubtitle="Inter-Regular"
+				fontFamilyXTicklabels="Inter-Regular"
+				fontFamilyYTicklabels="Inter-Regular"
+				// title={`${timePeriodString} ${apiResult.tickerMetadata.name} Performance: ${percentageString}`}
+				title={`${apiResult.tickerMetadata.name} ${apiResult.timePeriod} Performance: ${percentageString}`}
+				subtitle={subtitle || apiResult.subtitle}
+				showZero={showZero}
+				data={apiResult.data}
+				styling={mergedStyling}
+				showLineChartLayout={false}
+				watermark={true}
+			/>
 		</AbsoluteFill>
 	);
 };
@@ -181,6 +221,8 @@ const fetchNerdyFinancePriceCharts = async (
 
 	const apiUrl = `${apiBase}/flics/simple-price-chart?ticker=${ticker}&&endDate=${endDate}&timePeriod=${timePeriod}`;
 
+	console.log(apiUrl);
+
 	const data = await fetch(apiUrl);
 
 	const json = await data.json();
@@ -196,6 +238,10 @@ const fetchNerdyFinancePriceCharts = async (
 	return {
 		data: parsedData,
 		title: json.title,
+		ticker: json.ticker,
+		timePeriod: json.time_period,
+		percentageChange: json.percentage_change,
 		subtitle: json.subtitle,
+		tickerMetadata: json.ticker_metadata,
 	};
 };

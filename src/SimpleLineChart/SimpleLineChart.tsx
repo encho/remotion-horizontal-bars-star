@@ -22,6 +22,8 @@ import {fontFamilies} from '../fontSpecs';
 
 export const simpleLineChartSchema = z.object({
 	title: z.string(),
+	// title: z.union([z.string(), z.object({})]),
+	// title: z.union([z.string(), z.any()]),
 	subtitle: z.string(),
 	showZero: z.boolean(),
 	fontFamilyTitle: z.enum(fontFamilies),

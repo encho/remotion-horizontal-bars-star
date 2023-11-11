@@ -141,6 +141,7 @@ export function LineChartBody({
 	// const percentageAnimation = Math.min(frame / (durationInFrames / 2), 1);
 	const pointAtLength = getPointAtLength(d, percentageAnimation * pathLength);
 	const evolvedPath = evolvePath(percentageAnimation, d);
+
 	const tickValues = yScale.nice().ticks(5);
 
 	const xTickValuesMonthBoundaries = generateMonthBoundariesDates(
@@ -214,6 +215,23 @@ export function LineChartBody({
 						);
 					})}
 
+					{/* x axis line */}
+					<g>
+						<line
+							x1={xScale(xTickValuesMonthBoundaries[0])}
+							x2={xScale(
+								xTickValuesMonthBoundaries[
+									xTickValuesMonthBoundaries.length - 1
+								]
+							)}
+							y1={chartLayout.areas.xAxis.y1}
+							y2={chartLayout.areas.xAxis.y1}
+							stroke={styling.xTickValuesColor}
+							strokeWidth={styling.xTickValuesWidth}
+						/>
+					</g>
+
+					{/* x ticks */}
 					{xTickValuesMonthBoundaries.map((it, i) => {
 						return (
 							<g key={i}>
@@ -230,6 +248,7 @@ export function LineChartBody({
 						);
 					})}
 
+					{/* x month centroid labels */}
 					{xTickValuesMonthCentroids.map((it, i) => {
 						return (
 							<g key={i}>

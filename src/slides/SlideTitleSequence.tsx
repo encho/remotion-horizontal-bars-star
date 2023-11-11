@@ -1,5 +1,5 @@
 import {Sequence, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
-import {useMemo} from 'react';
+import {ReactNode, useMemo} from 'react';
 import {SlideIn} from '../SlideIn';
 
 import availableFontSpecs, {FontFamiliesUnionType} from '../fontSpecs';
@@ -26,7 +26,7 @@ export function SlideTitleSequence({
 	fontFamilyTitle,
 	fontFamilySubtitle,
 }: {
-	title: string;
+	title: string | ReactNode;
 	subTitle: string;
 	fontFamilyTitle: FontFamiliesUnionType;
 	fontFamilySubtitle: FontFamiliesUnionType;

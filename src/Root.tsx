@@ -42,11 +42,11 @@ export const RemotionRoot: React.FC = () => {
 				{...squareVideo}
 				schema={nerdyPriceChartSchema}
 				defaultProps={{
-					ticker: 'SPX_INDEX' as const,
-					timePeriod: '2Y' as const,
+					ticker: 'PFE' as const,
+					timePeriod: 'YTD' as const,
 					showZero: false,
 					nerdyFinanceEnv: 'DEV' as const,
-					styling: {yAxisAreaWidth: 129},
+					styling: {yAxisAreaWidth: 64},
 				}}
 			/>
 
@@ -61,7 +61,7 @@ export const RemotionRoot: React.FC = () => {
 				{...squareVideo}
 				schema={simpleLineChartSchema}
 				defaultProps={{
-					title: 'BTC-USD Performance',
+					title: 'BTC-USD Performance 4234223',
 					subtitle: 'Prices in USD',
 					showZero: false,
 					fontFamilyTitle: 'SourceSerifPro-Bold' as const,
@@ -1049,7 +1049,7 @@ export const RemotionRoot: React.FC = () => {
 						yLabelsColor: '#C4AE78',
 						xLabelsColor: '#C4AE78',
 						lineColor: '#00c278',
-						yAxisAreaWidth: 128,
+						yAxisAreaWidth: 132,
 						lineStrokeWidth: 10,
 						lineCircleRadius: 16,
 						yTickValuesFontSize: 40,
@@ -1083,7 +1083,7 @@ export const RemotionRoot: React.FC = () => {
 				{...squareVideo}
 				schema={bundesligaTop10BarChartSchema}
 				defaultProps={{
-					dateString: '29. Oktober 2023',
+					dateString: '5. Novermber 2023',
 					year: 2023,
 					apiData: null,
 				}}

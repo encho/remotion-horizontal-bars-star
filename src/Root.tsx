@@ -42,11 +42,11 @@ export const RemotionRoot: React.FC = () => {
 				{...squareVideo}
 				schema={nerdyPriceChartSchema}
 				defaultProps={{
-					ticker: 'PFE' as const,
-					timePeriod: 'YTD' as const,
-					showZero: false,
-					nerdyFinanceEnv: 'DEV' as const,
-					styling: {yAxisAreaWidth: 64},
+					ticker: 'BTC-USD' as const,
+					timePeriod: '3M' as const,
+					showZero: true,
+					nerdyFinanceEnv: 'PROD' as const,
+					styling: {yAxisAreaWidth: 150},
 				}}
 			/>
 
@@ -1083,7 +1083,7 @@ export const RemotionRoot: React.FC = () => {
 				{...squareVideo}
 				schema={bundesligaTop10BarChartSchema}
 				defaultProps={{
-					dateString: '5. Novermber 2023',
+					dateString: '10. December 2023',
 					year: 2023,
 					apiData: null,
 				}}

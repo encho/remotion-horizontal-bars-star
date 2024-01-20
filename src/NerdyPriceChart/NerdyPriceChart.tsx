@@ -1,7 +1,7 @@
 import {AbsoluteFill, delayRender, continueRender} from 'remotion';
 import {z} from 'zod';
 import {useEffect, useState} from 'react';
-import {find} from 'lodash';
+// import {find} from 'lodash';
 
 import {SimpleLineChart} from '../SimpleLineChart/SimpleLineChart';
 
@@ -111,8 +111,8 @@ export const NerdyPriceChart: React.FC<
 	nerdyFinanceEnv,
 	styling = {},
 }) => {
-	// TODO from props
-	const endDate = '2023-10-31T15:36:06.837Z';
+	const today = new Date();
+	const endDate = today.toISOString();
 
 	const [apiResult, setApiResult] = useState<null | TNerdyPriceChartApiResult>(
 		null
@@ -217,7 +217,12 @@ const fetchNerdyFinancePriceCharts = async (
 	{ticker, endDate, timePeriod}: NerdyFinancePriceChartsArgs,
 	nerdyFinanceEnv: 'DEV' | 'STAGE' | 'PROD'
 ): Promise<TNerdyPriceChartApiResult> => {
-	const apiBase = nerdyFinanceEnv === 'DEV' ? 'http://127.0.0.1:5000' : null;
+	const apiBase =
+		nerdyFinanceEnv === 'DEV'
+			? 'http://127.0.0.1:5000'
+			: nerdyFinanceEnv === 'STAGE'
+			? 'https://coinfolio-quant-stage.onrender.com'
+			: 'https://coinfolio-quant.onrender.com';
 
 	const apiUrl = `${apiBase}/flics/simple-price-chart?ticker=${ticker}&&endDate=${endDate}&timePeriod=${timePeriod}`;
 
